@@ -14,6 +14,7 @@ html {
 
 :root {
     --secondary-gradient: linear-gradient(45deg, #9900ff, #3795bd);
+    --scrollbar-track: #f0f0f0;
 }
 
 body {
@@ -36,6 +37,9 @@ body {
     height: 8px;
 }
 
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
 
 ::-webkit-scrollbar-thumb {
     background: var(--secondary-gradient);
