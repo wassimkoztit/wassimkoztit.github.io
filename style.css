@@ -340,118 +340,6 @@ body {
 
 
 /* ========================================
-   AI LOADER (inside modal)
-======================================== */
-
-.ai-loader {
-    position: absolute;
-    inset: 0;
-    background: #08090d;
-    z-index: 10;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
-
-    border-radius: 20px;
-}
-
-.ai-loader.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.ai-loader.hidden {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.loader-logo-wrapper {
-    position: relative;
-    width: 110px;
-    height: 110px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.loader-logo {
-    width: 80px;
-    height: 80px;
-
-    object-fit: contain;
-    border-radius: 50%;
-
-    animation: logoSpin 2.4s linear infinite;
-    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.6));
-}
-
-@keyframes logoSpin {
-    0%   { transform: rotate(0deg)   scale(1);    }
-    50%  { transform: rotate(180deg) scale(1.08); }
-    100% { transform: rotate(360deg) scale(1);    }
-}
-
-.loader-ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-
-    border: 2px solid transparent;
-    border-top-color: #8b5cf6;
-    border-right-color: #06b6d4;
-
-    animation: ringSpin 1.2s linear infinite;
-}
-
-@keyframes ringSpin {
-    0%   { transform: rotate(0deg);   }
-    100% { transform: rotate(360deg); }
-}
-
-.loader-text {
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: #fff;
-
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.loader-text span {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 3px 8px;
-
-    color: #c4b5fd;
-    background: rgba(139, 92, 246, 0.15);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    border-radius: 6px;
-}
-
-.loader-text::after {
-    content: "";
-    animation: dots 1.4s steps(4, end) infinite;
-}
-
-@keyframes dots {
-    0%, 20%  { content: "";    }
-    40%      { content: ".";   }
-    60%      { content: "..";  }
-    80%, 100%{ content: "..."; }
-}
-
-
-/* ========================================
    AI CHAT BOX
 ======================================== */
 
@@ -491,6 +379,7 @@ body {
     gap: 12px;
 }
 
+/* Weyra logo avatar */
 .ai-avatar {
     width: 40px;
     height: 40px;
@@ -499,8 +388,16 @@ body {
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-    color: #fff;
-    font-size: 18px;
+    overflow: hidden;
+    padding: 3px;
+}
+
+.ai-avatar-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 9px;
+    display: block;
 }
 
 .ai-chat-title strong {
@@ -574,26 +471,36 @@ body {
     border-bottom-right-radius: 4px;
 }
 
+
+/* ========================================
+   INLINE AI LOADER (typing indicator)
+   Appears inside chat when bot is "thinking"
+======================================== */
+
 .ai-message-typing {
-    display: flex;
-    gap: 4px;
+    display: flex !important;
     align-items: center;
+    justify-content: center;
+    padding: 10px 14px !important;
+    min-width: 56px;
 }
 
-.ai-message-typing span {
-    width: 6px;
-    height: 6px;
-    background: #a78bfa;
+.ai-typing-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
     border-radius: 50%;
-    animation: typing 1.2s infinite;
+
+    /* Fast → Slow → Fast rotation cycle */
+    animation: typingRotate 2.4s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.6));
 }
 
-.ai-message-typing span:nth-child(2) { animation-delay: 0.2s; }
-.ai-message-typing span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes typing {
-    0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
-    30%           { opacity: 1;   transform: translateY(-4px); }
+@keyframes typingRotate {
+    0%   { transform: rotate(0deg);   animation-timing-function: ease-in;  }
+    40%  { transform: rotate(540deg); animation-timing-function: ease-out; }
+    60%  { transform: rotate(540deg); animation-timing-function: ease-in;  }
+    100% { transform: rotate(1080deg); }
 }
 
 .ai-chat-input-wrapper {
@@ -759,10 +666,6 @@ body {
         border-radius: 16px;
     }
 
-    .ai-loader {
-        border-radius: 16px;
-    }
-
     .ai-chat-messages {
         padding: 14px;
     }
@@ -776,18 +679,9 @@ body {
         font-size: 16px;
     }
 
-    .loader-logo-wrapper {
-        width: 90px;
-        height: 90px;
-    }
-
-    .loader-logo {
-        width: 65px;
-        height: 65px;
-    }
-
-    .loader-text {
-        font-size: 14px;
+    .ai-typing-logo {
+        width: 28px;
+        height: 28px;
     }
 
 }
