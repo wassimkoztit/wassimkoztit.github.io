@@ -12,6 +12,11 @@ html {
     scroll-behavior: smooth;
 }
 
+:root {
+    --secondary-gradient: linear-gradient(45deg, #9900ff, #3795bd);
+    --scrollbar-track: #f0f0f0;
+}
+
 body {
     min-height: 100vh;
     font-family: "Inter", sans-serif;
@@ -19,6 +24,36 @@ body {
         radial-gradient(circle at 50% -10%, rgba(124, 58, 237, 0.25), transparent 35%),
         #08090d;
     color: #ffffff;
+    overflow-x: hidden;
+}
+
+
+/* ========================================
+   SCROLLBAR
+======================================== */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--secondary-gradient);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #7a00cc, #2b7898);
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #9900ff var(--scrollbar-track);
 }
 
 
@@ -460,9 +495,11 @@ body {
     border-radius: 12px;
     color: #fff;
     font-family: inherit;
-    font-size: 13.5px;
+    font-size: 16px; /* 16px prevents iOS auto-zoom */
     outline: none;
     transition: border-color 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 #aiChatInput:focus {
@@ -570,6 +607,11 @@ body {
     .ai-message {
         font-size: 13px;
         max-width: 90%;
+    }
+
+    /* Keep input at 16px on mobile to prevent auto-zoom */
+    #aiChatInput {
+        font-size: 16px;
     }
 
 }
