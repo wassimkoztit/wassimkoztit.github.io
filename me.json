@@ -1,0 +1,123 @@
+{
+  "name": "Wassim El Koztit",
+  "username": "@wassimkoztit",
+  "title": "Founder & Entrepreneur",
+  "tagline": "Electrical & Renewable Energy | Developer & AI Tech | Designer | Digital Creator",
+
+  "birthday": "2003-12-29",
+  "age_note": "Born in 2003",
+
+  "location": "Salé, Morocco",
+  "email": "wassimkt11@gmail.com",
+  "whatsapp_personal": "+212 679 484 103",
+  "whatsapp_business": "+212 664 158 149",
+
+  "about": "Holder of a Specialized Technician Diploma in Electrical Engineering - Renewable Energy, with skills in electrical installations, maintenance, automation, electronics and solar energy. I also have skills in web development, digital tools and artificial intelligence through different projects. Serious, versatile, adaptable and autonomous, I integrate easily into a team and learn quickly.",
+
+  "fields": [
+    "Electrical Engineering",
+    "Renewable Energy - Solar",
+    "Web Development",
+    "Artificial Intelligence",
+    "Graphic Design",
+    "Digital Creator"
+  ],
+
+  "education": [
+    {
+      "diploma": "Baccalaureate in Life and Earth Sciences",
+      "year": "2024",
+      "note": "Obtained in 2024 (2023-2024)"
+    },
+    {
+      "diploma": "Specialized Technician in Electrical Engineering",
+      "option": "Renewable Energy - Solar",
+      "school": "CFMMER",
+      "year": "2026",
+      "note": "Obtained in 2026 (2024-2026)"
+    }
+  ],
+
+  "skills": {
+    "technical": [
+      "Industrial and building electricity",
+      "Electrical maintenance",
+      "Renewable energy (solar photovoltaic)",
+      "Reading plans and electrical diagrams",
+      "Electrical safety and standards",
+      "Installation and wiring of single-phase and three-phase circuits",
+      "Reading and interpretation of industrial electrical diagrams",
+      "Assembly and wiring of electrical cabinets",
+      "Starting and protection of electric motors (star-delta)",
+      "Use of measuring devices (multimeter, clamp meter)",
+      "Preventive and corrective maintenance of electrical installations",
+      "Installation and connection of photovoltaic systems",
+      "Study of solar system components (panels, regulator, inverter, batteries)",
+      "Calculation of power, voltage, current and efficiency",
+      "Application of electrical safety rules"
+    ],
+    "programming": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "PHP",
+      "Microsoft Excel",
+      "Microsoft Word",
+      "Microsoft PowerPoint",
+      "CADE_SIMU",
+      "Proteus",
+      "PVsyst",
+      "AutoCAD"
+    ],
+    "other": [
+      "Basics of graphic design & SVG",
+      "Organization sense and teamwork",
+      "Web development & AI tools"
+    ]
+  },
+
+  "languages": [
+    { "language": "Arabic", "level": "Native" },
+    { "language": "French", "level": "Advanced" },
+    { "language": "English", "level": "Excellent" },
+    { "language": "Spanish", "level": "Intermediate" }
+  ],
+
+  "experience": [
+    {
+      "role": "Internship at SGTM",
+      "field": "Maintenance and installation of heavy electrical equipment",
+      "note": "Received a work certificate"
+    }
+  ],
+
+  "certifications": [
+    "Volunteer Certificate - CAF 2025",
+    "Graphic Design Certificate OFPPT - CYCM",
+    "PMC Certificate - WAFOON 2026"
+  ],
+
+  "projects": [
+    "Personal links page",
+    "AI assistant for personal info",
+    "Renewable energy solutions",
+    "Photovoltaic systems"
+  ],
+
+  "interests": [
+    "Artificial Intelligence",
+    "Renewable Energy",
+    "Web Development",
+    "Graphic Design",
+    "Open Source"
+  ],
+
+  "social": {
+    "instagram": "https://www.instagram.com/waa_ss_iiim",
+    "whatsapp_personal": "https://wa.me/212679484103",
+    "whatsapp_business": "https://wa.me/212664158149",
+    "facebook": "https://facebook.com/wassim.kt.9",
+    "linkedin": "https://www.linkedin.com/in/wassim-el-koztit-894596385",
+    "github": "https://github.com/wassimkoztit"
+  }
+}
