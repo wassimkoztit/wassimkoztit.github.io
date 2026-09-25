@@ -40,7 +40,23 @@
 <h1 class="profile-name">
     Wassim El Koztit
     <span class="verified">
-        <i class="fa-solid fa-check"></i>
+        <svg viewBox="0 0 512 512" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="vettedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#0095F6" />
+                    <stop offset="100%" stop-color="#0095F6" />
+                </linearGradient>
+                <filter id="vettedGlow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="8" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+            </defs>
+            <g filter="url(#vettedGlow)">
+                <path d="M 256,56 C 275,56 288,72 306,78 C 324,84 343,78 358,90 C 373,102 379,122 390,137 C 401,152 420,163 424,182 C 428,201 417,219 417,238 C 417,257 428,275 424,294 C 420,313 401,324 390,339 C 379,354 373,374 358,386 C 343,398 324,392 306,398 C 288,404 275,420 256,420 C 237,420 224,404 206,398 C 188,392 169,398 154,386 C 139,374 133,354 122,339 C 111,324 92,313 88,294 C 84,275 95,257 95,238 C 95,219 84,201 88,182 C 92,163 111,152 122,137 C 133,122 139,102 154,90 C 169,78 188,84 206,78 C 224,72 237,56 256,56 Z" fill="url(#vettedGrad)" />
+                <path d="M 256,70 C 273,70 284,84 300,90 C 316,96 333,90 346,101 C 359,112 364,130 374,143 C 384,156 401,166 404,183 C 407,200 398,216 398,233 C 398,250 407,266 404,283 C 401,300 384,310 374,323 C 364,336 359,354 346,365 C 333,376 316,370 300,376 C 284,382 273,396 256,396 C 239,396 228,382 212,376 C 196,370 179,376 166,365 C 153,354 148,336 138,323 C 128,310 111,300 108,283 C 105,266 114,250 114,233 C 114,216 105,200 108,183 C 111,166 128,156 138,143 C 148,130 153,112 166,101 C 179,90 196,96 212,90 C 228,84 239,70 256,70 Z" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.35" />
+                <path d="M 180,240 L 230,290 L 332,185" fill="none" stroke="#ffffff" stroke-width="36" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+        </svg>
     </span>
 </h1>
 
