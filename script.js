@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ========================================
 
 let userData = null;
-let lastReplies = {}; // لتتبع آخر رد لكل intent (منع التكرار)
+let lastReplies = {};
 
 // Load me.json
 fetch("me.json")
@@ -115,7 +115,7 @@ function sendMessage() {
 
 
 // ========================================
-// RENDER MESSAGE — supports markdown links
+// RENDER MESSAGE
 // ========================================
 
 function addMessage(text, type, allowLinks = false) {
@@ -133,20 +133,17 @@ function addMessage(text, type, allowLinks = false) {
 }
 
 
-// Convert [label](url) to <a> buttons
 function renderWithLinks(text) {
-    // Escape HTML first
     let safe = text
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
 
-    // Convert newlines to <br>
+    safe = safe.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
     safe = safe.replace(/\n/g, "<br>");
 
-    // Convert [label](url) to button-style links
     safe = safe.replace(
-        /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+        /\[([^\]]+)\]\((https?:\/\/[^\s)]+|mailto:[^\s)]+)\)/g,
         '<a href="$2" target="_blank" rel="noopener noreferrer" class="ai-link-btn">$1 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'
     );
 
@@ -170,7 +167,7 @@ function normalize(str) {
 
 
 // ========================================
-// LEVENSHTEIN DISTANCE
+// LEVENSHTEIN
 // ========================================
 
 function levenshtein(a, b) {
@@ -232,14 +229,14 @@ const STOP_WORDS = new Set([
     "there", "here", "where", "when", "why", "how",
     "what", "which", "who", "whom", "whose",
     "please", "kindly", "just", "really", "very",
-    "want", "wanna", "need", "like", "would like",
+    "want", "wanna", "need", "like", "would",
     "tell", "show", "give", "know", "get", "find",
-    "see", "look", "help", "let", "make", "made"
+    "see", "look", "let", "make", "made"
 ]);
 
 
 // ========================================
-// RANDOM PICK (avoid repeats)
+// RANDOM PICK
 // ========================================
 
 function pickRandom(intentName, options) {
@@ -248,7 +245,6 @@ function pickRandom(intentName, options) {
     let last = lastReplies[intentName];
     let choice;
 
-    // Try up to 5 times to pick a different reply
     for (let i = 0; i < 5; i++) {
         choice = options[Math.floor(Math.random() * options.length)];
         if (choice !== last) break;
@@ -260,18 +256,67 @@ function pickRandom(intentName, options) {
 
 
 // ========================================
-// INTENTS — multiple reply variants
+// MATH EVALUATOR (safe)
+// ========================================
+
+function tryMath(question) {
+    const cleaned = question.replace(/[^0-9+\-*/().\s]/g, "").trim();
+
+    // Must contain at least one operator and one number
+    if (!/[+\-*/]/.test(cleaned)) return null;
+    if (!/\d/.test(cleaned)) return null;
+
+    // Avoid huge or dangerous input
+    if (cleaned.length > 30) return null;
+
+    try {
+        // Only allow numbers and operators
+        const result = Function(`"use strict"; return (${cleaned})`)();
+
+        if (typeof result !== "number" || !isFinite(result)) return null;
+
+        return { expression: cleaned, result };
+    } catch {
+        return null;
+    }
+}
+
+
+// ========================================
+// INTENTS
 // ========================================
 
 const INTENTS = [
+
+    // ==========================================
+    // HOW ARE YOU / FEELINGS
+    // ==========================================
+    {
+        name: "howareyou",
+        keywords: [
+            "how are you", "how r u", "how r you", "hru",
+            "how you doing", "how are u", "how is it going",
+            "how is it", "ca va", "comment ca va", "kidayr",
+            "kidayra", "labas", "labas 3lik", "whats up",
+            "wassup", "sup", "how do you feel", "how you feel"
+        ],
+        replies: [
+            () => `I'm just code, but running great — thanks for asking!\n\nHow can I help you today?`,
+            () => `Doing well on my side! Ready to answer anything about ${userData.name}.`,
+            () => `All good here! ⚡ What would you like to know?`,
+            () => `I'm fine, thanks! Ask me anything about Wassim — skills, companies, contact...`
+        ]
+    },
+
+    // ==========================================
+    // GREETING
+    // ==========================================
     {
         name: "greeting",
         keywords: [
-            "hi", "hello", "hey", "yo", "sup", "hola",
+            "hi", "hello", "hey", "yo", "hola",
             "salam", "salamo", "salut", "bonjour", "bonsoir",
-            "good morning", "good evening", "good afternoon",
-            "labas", "how are you", "how r u", "hru", "ca va",
-            "kidayr", "whats up", "wassup"
+            "good morning", "good evening", "good afternoon"
         ],
         replies: [
             () => `Hello! I'm ${userData.name}'s AI assistant. Ask me about:\n- His birthday\n- His skills\n- His companies\n- His projects\n- How to contact him`,
@@ -280,6 +325,10 @@ const INTENTS = [
             () => `Salam! I'm here to help. Try asking "what are his skills?" or "tell me about his companies"`
         ]
     },
+
+    // ==========================================
+    // THANKS
+    // ==========================================
     {
         name: "thanks",
         keywords: [
@@ -294,6 +343,10 @@ const INTENTS = [
             () => "My pleasure! Feel free to ask more questions."
         ]
     },
+
+    // ==========================================
+    // GOODBYE
+    // ==========================================
     {
         name: "goodbye",
         keywords: [
@@ -308,46 +361,209 @@ const INTENTS = [
             () => "Take care! Have a great day."
         ]
     },
+
+    // ==========================================
+    // ABOUT THE BOT ITSELF
+    // ==========================================
     {
-        name: "birthday",
+        name: "bot_identity",
         keywords: [
-            "birthday", "birth", "born", "age", "old",
-            "anniversaire", "naissance", "date of birth", "dob",
-            "how old"
+            "your name", "who are you", "what are you",
+            "are you human", "are you a bot", "are you real",
+            "are you ai", "are you a robot", "your identity",
+            "what is your name", "who made you", "who created you",
+            "who built you", "who developed you"
         ],
         replies: [
-            () => {
-                const date = new Date(userData.birthday);
-                const now = new Date();
-                let age = now.getFullYear() - date.getFullYear();
-                const m = now.getMonth() - date.getMonth();
-                if (m < 0 || (m === 0 && now.getDate() < date.getDate())) age--;
-
-                const formatted = date.toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric"
-                });
-
-                return `Birthday: ${formatted}\nAge: ${age} years old`;
-            }
+            () => `I'm an AI assistant built to tell you about ${userData.name}.\n\nI'm not human — just code that knows his info!`,
+            () => `I'm the AI assistant of ${userData.name}.\n\nI'm not a real person, just a smart bot with his data.`,
+            () => `I'm a virtual assistant created for ${userData.name}'s links page.\n\nI know his skills, companies, projects, contact info and more.`
         ]
     },
+
+    // ==========================================
+    // COMPLIMENTS
+    // ==========================================
+    {
+        name: "compliment",
+        keywords: [
+            "you are smart", "you are great", "you are amazing",
+            "you are cool", "you are good", "nice", "cool",
+            "awesome", "great job", "well done", "bravo",
+            "impressive", "you rock", "good bot", "nice bot",
+            "you are the best", "i like you"
+        ],
+        replies: [
+            () => `Thank you! That's very kind. 😊`,
+            () => `Thanks! I appreciate it. Anything else I can help with?`,
+            () => `Aw, thanks! I'll do my best to keep helping you.`,
+            () => `Appreciate it! Let me know if you need anything else.`
+        ]
+    },
+
+    // ==========================================
+    // INSULTS / NEGATIVE
+    // ==========================================
+    {
+        name: "insult",
+        keywords: [
+            "you are stupid", "you are dumb", "you are bad",
+            "you are useless", "you suck", "i hate you",
+            "shut up", "you are wrong", "nonsense"
+        ],
+        replies: [
+            () => `Sorry if I didn't help. Try asking differently or in another way.`,
+            () => `I'm still learning. Can you rephrase your question?`,
+            () => `My apologies. Let me try again — what exactly do you want to know?`
+        ]
+    },
+
+    // ==========================================
+    // JOKES / FUN
+    // ==========================================
+    {
+        name: "joke",
+        keywords: ["tell me a joke", "make me laugh", "say something funny", "joke"],
+        replies: [
+            () => `Why did the electrician go to therapy?\nBecause he had too many live wires! ⚡`,
+            () => `Why do solar panels make great comedians?\nBecause they always shine bright! ☀️`,
+            () => `I would tell you a joke about AI, but I'm still processing it. 🤖`
+        ]
+    },
+
+    // ==========================================
+    // TIME / DATE
+    // ==========================================
+    {
+        name: "time",
+        keywords: ["what time is it", "current time", "time now", "what is the time"],
+        replies: [
+            () => `I don't have a real clock, but your device knows: ${new Date().toLocaleTimeString()}`
+        ]
+    },
+    {
+        name: "date",
+        keywords: ["what date is it", "today's date", "current date", "what day is it"],
+        replies: [
+            () => `Today is ${new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}.`
+        ]
+    },
+
+    // ==========================================
+    // CAPABILITIES
+    // ==========================================
+    {
+        name: "help",
+        keywords: [
+            "help", "what can you do", "options", "menu",
+            "commands", "questions", "aide", "what do you know",
+            "what can i ask", "what can i ask you", "show me options"
+        ],
+        replies: [
+            () => `I can answer:\n- Birthday & age\n- Email, WhatsApp, phone\n- Instagram, Facebook, LinkedIn, GitHub\n- Skills (technical & programming)\n- Education\n- Experience\n- Companies (Warstom, Weyra, 4-Event, Solarax)\n- Languages\n- Projects\n- Location`,
+            () => `Ask me about ${userData.name}:\n- His skills & expertise\n- His companies\n- His projects\n- His contact info\n- His education & experience\n- His social media\n\nOr just say "hi"!`,
+            () => `You can ask things like:\n- "What is his email?"\n- "Tell me about Warstom"\n- "What are his skills?"\n- "Who is Wassim?"\n- "Show his Instagram"`
+        ]
+    },
+
+    // ==========================================
+    // SEPARATE CONTACT CHANNELS
+    // ==========================================
+    {
+        name: "email",
+        keywords: [
+            "email", "mail", "gmail", "e mail", "e-mail",
+            "send email", "his email", "email address"
+        ],
+        replies: [
+            () => `${userData.email}`,
+            () => `His email: ${userData.email}`,
+            () => `[Send him an email](mailto:${userData.email})`
+        ]
+    },
+    {
+        name: "whatsapp",
+        keywords: [
+            "whatsapp", "wa", "whats app", "what's app",
+            "whatsapp number", "whatsapp business"
+        ],
+        replies: [
+            () => `Personal: ${userData.whatsapp_personal}\nBusiness: ${userData.whatsapp_business}`,
+            () => `WhatsApp Personal: ${userData.whatsapp_personal}\nWhatsApp Business: ${userData.whatsapp_business}`,
+            () => `[Personal WhatsApp](https://wa.me/212679484103)  \n[Business WhatsApp](https://wa.me/212664158149)`
+        ]
+    },
+    {
+        name: "phone",
+        keywords: [
+            "phone", "number", "tel", "telephone",
+            "call", "mobile", "gsm", "phone number",
+            "his number", "his phone"
+        ],
+        replies: [
+            () => `Personal: ${userData.whatsapp_personal}\nBusiness: ${userData.whatsapp_business}`,
+            () => `His phone numbers:\n- Personal: ${userData.whatsapp_personal}\n- Business: ${userData.whatsapp_business}`
+        ]
+    },
+    {
+        name: "instagram",
+        keywords: ["instagram", "insta", "ig"],
+        replies: [
+            () => `[Instagram](${userData.social.instagram})`,
+            () => `His Instagram: ${userData.social.instagram}`,
+            () => `[Follow him on Instagram](${userData.social.instagram})`
+        ]
+    },
+    {
+        name: "facebook",
+        keywords: ["facebook", "fb"],
+        replies: [
+            () => `[Facebook](${userData.social.facebook})`,
+            () => `His Facebook: ${userData.social.facebook}`,
+            () => `[Visit his Facebook](${userData.social.facebook})`
+        ]
+    },
+    {
+        name: "linkedin",
+        keywords: ["linkedin", "linked in", "ln"],
+        replies: [
+            () => `[LinkedIn](${userData.social.linkedin})`,
+            () => `His LinkedIn: ${userData.social.linkedin}`,
+            () => `[Connect with him on LinkedIn](${userData.social.linkedin})`
+        ]
+    },
+    {
+        name: "github",
+        keywords: ["github", "git hub", "git"],
+        replies: [
+            () => `[GitHub](${userData.social.github})`,
+            () => `His GitHub: ${userData.social.github}`,
+            () => `[Check his GitHub](${userData.social.github})`
+        ]
+    },
+
+    // ==========================================
+    // GENERAL CONTACT
+    // ==========================================
     {
         name: "contact",
         keywords: [
-            "contact", "email", "mail", "reach", "gmail",
-            "e mail", "e-mail", "whatsapp", "phone", "number",
-            "tel", "telephone", "call", "mobile", "gsm",
-            "get in touch", "talk to him", "speak to him",
-            "message him", "hire him", "work with him"
+            "contact", "reach", "reach him", "get in touch",
+            "talk to him", "speak to him", "message him",
+            "hire him", "work with him", "contact him",
+            "contact info", "contact information",
+            "how to contact", "how can i contact"
         ],
         replies: [
-            () => `Here's how to reach Wassim:\n\n[Email](mailto:${userData.email})\n[WhatsApp Personal](https://wa.me/212679484103)\n[WhatsApp Business](https://wa.me/212664158149)`,
-            () => `You can contact him here:\n\n[Send Email](mailto:${userData.email})\n[WhatsApp](https://wa.me/212664158149)`,
-            () => `Contact info:\n\nEmail: ${userData.email}\n\n[Personal WhatsApp](https://wa.me/212679484103) · [Business WhatsApp](https://wa.me/212664158149)`
+            () => `You can reach Wassim here:\n\n[Email](mailto:${userData.email})\n[WhatsApp Personal](https://wa.me/212679484103)\n[WhatsApp Business](https://wa.me/212664158149)`,
+            () => `Contact options:\n\nEmail: ${userData.email}\n[Personal WhatsApp](https://wa.me/212679484103)\n[Business WhatsApp](https://wa.me/212664158149)`,
+            () => `Ways to contact him:\n\n[Send Email](mailto:${userData.email})\n[WhatsApp](https://wa.me/212664158149)`
         ]
     },
+
+    // ==========================================
+    // PROFILE
+    // ==========================================
     {
         name: "who",
         keywords: [
@@ -378,7 +594,7 @@ const INTENTS = [
                 const tech = userData.skills.technical.slice(6, 12).map(s => `- ${s}`).join("\n");
                 return `More technical skills:\n${tech}`;
             },
-            () => `He has ${userData.skills.technical.length} technical skills total. Here's a preview:\n- ${userData.skills.technical.slice(0, 5).join("\n- ")}`
+            () => `He has ${userData.skills.technical.length} technical skills total:\n- ${userData.skills.technical.slice(0, 5).join("\n- ")}`
         ]
     },
     {
@@ -406,12 +622,19 @@ const INTENTS = [
     {
         name: "fields",
         keywords: [
-            "field", "domain", "work", "job", "profession",
-            "career", "specialty", "metier", "industry"
+            "field", "domain", "profession",
+            "specialty", "metier", "industry"
         ],
         replies: [
             () => `Fields: ${userData.fields.join(" | ")}`,
             () => `He works in:\n- ${userData.fields.join("\n- ")}`
+        ]
+    },
+    {
+        name: "job",
+        keywords: ["job", "work", "career", "what does he do"],
+        replies: [
+            () => `He's a ${userData.title}.\n\nFields: ${userData.fields.join(" | ")}`
         ]
     },
     {
@@ -433,7 +656,7 @@ const INTENTS = [
     {
         name: "experience",
         keywords: [
-            "experience", "stage", "internship", "career",
+            "experience", "stage", "internship",
             "sgtm", "worked", "job history", "professional",
             "worked at", "worked for"
         ],
@@ -481,14 +704,16 @@ const INTENTS = [
             () => `Some of his projects:\n${userData.projects.map(p => `• ${p}`).join("\n")}`
         ]
     },
+
+    // ==========================================
+    // COMPANIES
+    // ==========================================
     {
         name: "companies",
         keywords: [
             "company", "companies", "business", "startup",
             "founder", "co-founder", "cofounder", "ceo",
             "owner", "entrepreneur", "venture",
-            "warstom", "weyra", "4-event", "4event", "solarax",
-            "solarax.ma", "warstom.com", "weyra.ai", "4-event.fun",
             "his company", "his companies", "his startups",
             "what does he own", "what does he run"
         ],
@@ -499,9 +724,7 @@ const INTENTS = [
                 }).join("\n\n");
                 return `Wassim's companies & ventures:\n\n${list}`;
             },
-            () => {
-                return `He founded/co-founded:\n\n${userData.companies.map(c => `• ${c.name} — ${c.role} [Visit](https://${c.website})`).join("\n")}`;
-            }
+            () => `He founded/co-founded:\n\n${userData.companies.map(c => `• **${c.name}** — ${c.role} [Visit](https://${c.website})`).join("\n")}`
         ]
     },
     {
@@ -532,6 +755,10 @@ const INTENTS = [
             () => `**Solarax** — Founder\n[solarax.ma](https://solarax.ma)\nStatus: Planned\nExpected launch: 2028\n\nA renewable energy company focused on solar solutions in Morocco.`
         ]
     },
+
+    // ==========================================
+    // MISC
+    // ==========================================
     {
         name: "interests",
         keywords: [
@@ -555,30 +782,28 @@ const INTENTS = [
         ]
     },
     {
-        name: "social",
+        name: "birthday",
         keywords: [
-            "social", "instagram", "facebook", "linkedin", "github",
-            "insta", "fb", "links", "profiles", "accounts"
+            "birthday", "birth", "born", "age", "old",
+            "anniversaire", "naissance", "date of birth", "dob",
+            "how old"
         ],
         replies: [
             () => {
-                const s = userData.social;
-                return `Social media:\n\n[Instagram](${s.instagram})\n[Facebook](${s.facebook})\n[LinkedIn](${s.linkedin})\n[GitHub](${s.github})`;
-            },
-            () => {
-                const s = userData.social;
-                return `Find him on:\n- Instagram: ${s.instagram}\n- GitHub: ${s.github}\n- LinkedIn: ${s.linkedin}`;
+                const date = new Date(userData.birthday);
+                const now = new Date();
+                let age = now.getFullYear() - date.getFullYear();
+                const m = now.getMonth() - date.getMonth();
+                if (m < 0 || (m === 0 && now.getDate() < date.getDate())) age--;
+
+                const formatted = date.toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                });
+
+                return `Birthday: ${formatted}\nAge: ${age} years old`;
             }
-        ]
-    },
-    {
-        name: "help",
-        keywords: [
-            "help", "what can you do", "options", "menu",
-            "commands", "questions", "aide", "what do you know"
-        ],
-        replies: [
-            () => `I can answer:\n- Birthday & age\n- Skills (technical & programming)\n- Education\n- Experience\n- Companies (Warstom, Weyra, 4-Event, Solarax)\n- Languages\n- Projects\n- Contact info\n- Location\n- Social media`
         ]
     },
     {
@@ -648,6 +873,15 @@ function getAIResponse(question) {
         return "Still loading my data... try again in a second.";
     }
 
+    const normalized = normalize(question);
+
+    // ---------- 1. MATH ----------
+    const mathResult = tryMath(question);
+    if (mathResult) {
+        return `Result: **${mathResult.result}**`;
+    }
+
+    // ---------- 2. INTENT SCORING ----------
     let bestIntent = null;
     let bestScore = 0;
 
@@ -665,11 +899,81 @@ function getAIResponse(question) {
         return typeof chosen === "function" ? chosen() : chosen;
     }
 
-    // Default fallback with variations
+    // ---------- 3. SMART FALLBACK ----------
     const fallbacks = [
-        `Hmm, I'm not sure about that. Try:\n- "What are his skills?"\n- "Tell me about Warstom"\n- "How can I contact him?"`,
-        `I didn't quite catch that. You can ask about:\n- His companies\n- His projects\n- His skills`,
-        `Not sure what you mean. Try asking "who is Wassim?" or "what companies does he own?"`
+        () => `I'm not sure what you mean. But I can tell you about:\n- His skills\n- His companies (Warstom, Weyra, 4-Event, Solarax)\n- His email & WhatsApp\n- His education & experience\n\nTry rephrasing your question.`,
+        () => `Hmm, I didn't quite get that. Here's what I can do:\n- Answer about ${userData.name}\n- Give you his contact info\n- Explain his companies\n- List his skills\n\nWhat do you want to know?`,
+        () => `I'm still learning! I know a lot about ${userData.name}:\n- Skills, companies, projects\n- Contact (email, WhatsApp, social)\n- Education, experience\n\nAsk me anything about him.`,
+        () => `That's outside my knowledge, but I'm great at answering questions about ${userData.name}.\n\nTry:\n- "What are his skills?"\n- "Tell me about Warstom"\n- "Give me his email"`
     ];
-    return pickRandom("fallback", fallbacks);
+    return pickRandom("fallback", fallbacks)();
 }
+
+
+
+
+// ========================================
+// LOADER
+// ========================================
+
+window.addEventListener("load", () => {
+    const loader = document.getElementById("loader");
+    if (!loader) return;
+
+    // Minimum display time for the loader (in ms)
+    // Slower = higher value, Faster = lower value
+    const MIN_LOADER_TIME = 2200;
+
+    setTimeout(() => {
+        loader.classList.add("hidden");
+    }, MIN_LOADER_TIME);
+});
+
+
+
+    // ==========================================
+    // ABOUT THE BOT ITSELF — Weyra AI v3.03.01
+    // ==========================================
+    {
+        name: "bot_identity",
+        keywords: [
+            "your name", "who are you", "what are you",
+            "are you human", "are you a bot", "are you real",
+            "are you ai", "are you a robot", "your identity",
+            "what is your name", "who made you", "who created you",
+            "who built you", "who developed you",
+            "weyra", "what is weyra", "tell me about weyra",
+            "tell me about yourself", "introduce yourself",
+            "which version", "your version", "what version"
+        ],
+        replies: [
+            () => `I'm **Weyra AI v3.03.01** — a mini version generated by **Wassim El Koztit**.\n\nI know everything about him: skills, companies, projects, contact info.`,
+            () => `I'm the mini version of **Weyra AI**, version **v3.03.01**.\n\nI was generated by ${userData.name} to help you learn about him.`,
+            () => `**Weyra AI v3.03.01** here — a lightweight assistant created by ${userData.name}.\n\nAsk me anything about him!`,
+            () => `I'm a mini Weyra AI (v3.03.01), generated by ${userData.name}.\n\nPart of his upcoming Weyra project at [weyra.ai](https://weyra.ai) (launching 03-2027).`
+        ]
+    },
+
+
+
+    // ========================================
+// MULTI-LANGUAGE WELCOME MESSAGE
+// ========================================
+
+function getWelcomeMessage() {
+    const lang = (navigator.language || "en").toLowerCase().slice(0, 2);
+
+    const messages = {
+        en: `Hi! I'm <strong>Weyra AI v3.03.01</strong> — a mini version generated by Wassim.<br>Ask me anything about him!`,
+        fr: `Salut ! Je suis <strong>Weyra AI v3.03.01</strong> — une mini version générée par Wassim.<br>Posez-moi une question sur lui !`,
+        ar: `مرحبا! أنا <strong>Weyra AI v3.03.01</strong> — نسخة مصغرة أنشأها وسيم.<br>اسألني أي شيء عنه!`,
+        es: `¡Hola! Soy <strong>Weyra AI v3.03.01</strong> — una mini versión generada por Wassim.<br>¡Pregúntame lo que quieras sobre él!`
+    };
+
+    return messages[lang] || messages.en;
+}
+
+window.addEventListener("load", () => {
+    const welcome = document.getElementById("aiWelcomeMessage");
+    if (welcome) welcome.innerHTML = getWelcomeMessage();
+});
