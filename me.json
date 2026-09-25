@@ -104,6 +104,42 @@
     "Photovoltaic systems"
   ],
 
+
+    "companies": [
+    {
+      "name": "Warstom",
+      "website": "warstom.com",
+      "role": "Founder & CEO",
+      "status": "Under Development - Coming Soon",
+      "expected_launch": "03-2027",
+      "description": "Warstom is a tech company focused on building innovative digital platforms and AI solutions."
+    },
+    {
+      "name": "Weyra AI",
+      "website": "weyra.ai",
+      "role": "Founder",
+      "status": "Under Development - Coming Soon",
+      "expected_launch": "03-2027",
+      "description": "Weyra is an AI assistant platform, built in partnership with the Warstom platform."
+    },
+    {
+      "name": "4-Event",
+      "website": "4-event.fun",
+      "role": "Co-Founder",
+      "status": "Coming Soon",
+      "expected_launch": "11-2026",
+      "description": "4-Event is an event platform for discovering, creating and sharing events."
+    },
+    {
+      "name": "Solarax",
+      "website": "solarax.ma",
+      "role": "Founder",
+      "status": "Planned",
+      "expected_launch": "2028",
+      "description": "Solarax is a renewable energy company focused on solar solutions in Morocco."
+    }
+  ],
+
   "interests": [
     "Artificial Intelligence",
     "Renewable Energy",
