@@ -642,3 +642,47 @@ body {
     }
 
 }
+
+
+
+/* ========================================
+   AI LINK BUTTONS
+======================================== */
+
+.ai-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin: 4px 4px 4px 0;
+    padding: 6px 12px;
+
+    font-size: 12.5px;
+    font-weight: 500;
+
+    color: #fff;
+    text-decoration: none;
+
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    border-radius: 8px;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.ai-link-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+    color: #fff;
+}
+
+.ai-link-btn i {
+    font-size: 10px;
+    opacity: 0.85;
+}
+
+/* Bold text support in messages */
+.ai-message strong {
+    color: #c4b5fd;
+    font-weight: 700;
+}
