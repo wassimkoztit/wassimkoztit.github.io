@@ -29,98 +29,6 @@ body {
 
 
 /* ========================================
-   LOADER — Weyra AI
-======================================== */
-
-.loader {
-    position: fixed;
-    inset: 0;
-    background: #08090d;
-    z-index: 99999;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-
-    transition: opacity 0.6s ease, visibility 0.6s ease;
-}
-
-.loader.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
-
-.loader-logo-wrapper {
-    position: relative;
-    width: 110px;
-    height: 110px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.loader-logo {
-    width: 80px;
-    height: 80px;
-
-    object-fit: contain;
-    border-radius: 50%;
-
-    animation: logoSpin 2.4s linear infinite;
-    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.6));
-}
-
-@keyframes logoSpin {
-    0%   { transform: rotate(0deg)   scale(1);    }
-    50%  { transform: rotate(180deg) scale(1.08); }
-    100% { transform: rotate(360deg) scale(1);    }
-}
-
-.loader-ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-
-    border: 2px solid transparent;
-    border-top-color: #8b5cf6;
-    border-right-color: #06b6d4;
-
-    animation: ringSpin 1.2s linear infinite;
-}
-
-@keyframes ringSpin {
-    0%   { transform: rotate(0deg);   }
-    100% { transform: rotate(360deg); }
-}
-
-.loader-text {
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: #fff;
-
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.loader-text span {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 3px 8px;
-
-    color: #c4b5fd;
-    background: rgba(139, 92, 246, 0.15);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    border-radius: 6px;
-}
-
-
-/* ========================================
    SCROLLBAR
 ======================================== */
 
@@ -430,6 +338,123 @@ body {
     visibility: visible;
 }
 
+
+/* ========================================
+   AI LOADER (inside modal)
+======================================== */
+
+.ai-loader {
+    position: absolute;
+    inset: 0;
+    background: #08090d;
+    z-index: 10;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+
+    border-radius: 20px;
+}
+
+.ai-loader.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.ai-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-logo-wrapper {
+    position: relative;
+    width: 110px;
+    height: 110px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader-logo {
+    width: 80px;
+    height: 80px;
+
+    object-fit: contain;
+    border-radius: 50%;
+
+    animation: logoSpin 2.4s linear infinite;
+    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.6));
+}
+
+@keyframes logoSpin {
+    0%   { transform: rotate(0deg)   scale(1);    }
+    50%  { transform: rotate(180deg) scale(1.08); }
+    100% { transform: rotate(360deg) scale(1);    }
+}
+
+.loader-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+
+    border: 2px solid transparent;
+    border-top-color: #8b5cf6;
+    border-right-color: #06b6d4;
+
+    animation: ringSpin 1.2s linear infinite;
+}
+
+@keyframes ringSpin {
+    0%   { transform: rotate(0deg);   }
+    100% { transform: rotate(360deg); }
+}
+
+.loader-text {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #fff;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.loader-text span {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+
+    color: #c4b5fd;
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 6px;
+}
+
+.loader-text::after {
+    content: "";
+    animation: dots 1.4s steps(4, end) infinite;
+}
+
+@keyframes dots {
+    0%, 20%  { content: "";    }
+    40%      { content: ".";   }
+    60%      { content: "..";  }
+    80%, 100%{ content: "..."; }
+}
+
+
+/* ========================================
+   AI CHAT BOX
+======================================== */
+
 .ai-chat-box {
     width: 100%;
     max-width: 460px;
@@ -444,6 +469,7 @@ body {
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
     transform: translateY(20px) scale(0.97);
     transition: transform 0.3s ease;
+    position: relative;
 }
 
 .ai-chat-modal.active .ai-chat-box {
@@ -730,6 +756,10 @@ body {
     .ai-chat-box {
         height: 85vh;
         max-height: none;
+        border-radius: 16px;
+    }
+
+    .ai-loader {
         border-radius: 16px;
     }
 
