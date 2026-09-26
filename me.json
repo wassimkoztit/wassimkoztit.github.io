@@ -2,15 +2,14 @@
   "name": "Wassim El Koztit",
   "username": "@wassimkoztit",
   "title": "Founder & Entrepreneur",
+  "email": "wassimkt11@gmail.com",
   "tagline": "Electrical & Renewable Energy | Developer & AI Tech | Designer | Digital Creator",
-
   "birthday": "2003-12-29",
   "age_note": "Born in 2003",
-
-  "location": "Salé, Morocco",
-  "email": "wassimkt11@gmail.com",
-  "whatsapp_personal": "+212 679 484 103",
-  "whatsapp_business": "+212 664 158 149",
+  "location": {
+    "city": "Salé",
+    "country": "Morocco"
+  },
 
   "about": "Holder of a Specialized Technician Diploma in Electrical Engineering - Renewable Energy, with skills in electrical installations, maintenance, automation, electronics and solar energy. I also have skills in web development, digital tools and artificial intelligence through different projects. Serious, versatile, adaptable and autonomous, I integrate easily into a team and learn quickly.",
 
@@ -27,14 +26,28 @@
     {
       "diploma": "Baccalaureate in Life and Earth Sciences",
       "year": "2024",
+      "school": {
+        "name": "Lycée Allama Mohamed Sbihi",
+        "city": "Salé",
+        "country": "Morocco"
+      },
       "note": "Obtained in 2024 (2023-2024)"
     },
     {
       "diploma": "Specialized Technician in Electrical Engineering",
       "option": "Renewable Energy - Solar",
-      "school": "CFMMER",
+      "school": {
+        "name": "Centre de Formation dans les Métiers de la Maintenance et des Énergies Renouvelables",
+        "acronym": "CFMMER",
+        "city": "Rabat",
+        "country": "Morocco",
+        "address": "Avenue Mustapha Essayeh - Océan, Rabat, Morocco",
+        "platform": "https://www.myway.ac.ma/fr/etablissement/PAE0",
+        "map": "https://maps.app.goo.gl/uusnUV7edHqKvUp58"
+      },
       "year": "2026",
-      "note": "Obtained in 2026 (2024-2026)"
+      "study_period": "2024-2026",
+      "note": "Obtained in 2026"
     }
   ],
 
@@ -42,21 +55,36 @@
     "technical": [
       "Industrial and building electricity",
       "Electrical maintenance",
-      "Renewable energy (solar photovoltaic)",
-      "Reading plans and electrical diagrams",
+      "Renewable energy - solar photovoltaic",
+      "Reading electrical plans and diagrams",
       "Electrical safety and standards",
-      "Installation and wiring of single-phase and three-phase circuits",
+      "Installation and wiring of single-phase circuits",
+      "Installation and wiring of three-phase circuits",
       "Reading and interpretation of industrial electrical diagrams",
       "Assembly and wiring of electrical cabinets",
-      "Starting and protection of electric motors (star-delta)",
-      "Use of measuring devices (multimeter, clamp meter)",
-      "Preventive and corrective maintenance of electrical installations",
-      "Installation and connection of photovoltaic systems",
-      "Study of solar system components (panels, regulator, inverter, batteries)",
-      "Calculation of power, voltage, current and efficiency",
-      "Application of electrical safety rules"
+      "Starting and protection of electric motors",
+      "Star-delta motor starting",
+      "Use of measuring devices",
+      "Multimeter",
+      "Clamp meter",
+      "Preventive maintenance of electrical installations",
+      "Corrective maintenance of electrical installations",
+      "Installation of photovoltaic systems",
+      "Connection of photovoltaic systems",
+      "Study of solar panels",
+      "Study of solar regulators",
+      "Study of solar inverters",
+      "Study of solar batteries",
+      "Calculation of electrical power",
+      "Calculation of voltage",
+      "Calculation of current",
+      "Calculation of system efficiency",
+      "Application of electrical safety rules",
+      "Basic automation systems",
+      "Electrical and electronic systems"
     ],
-    "programming": [
+
+    "programming_and_software": [
       "HTML",
       "CSS",
       "JavaScript",
@@ -69,144 +97,333 @@
       "PVsyst",
       "AutoCAD"
     ],
+
+    "ai_and_digital": [
+      "Artificial Intelligence tools",
+      "AI-assisted development",
+      "Web development",
+      "Digital tools",
+      "AI assistant concepts",
+      "Website creation",
+      "Digital content creation"
+    ],
+
+    "design": [
+      "Graphic design basics",
+      "SVG creation and editing",
+      "Digital visual design",
+      "Logo and visual identity basics"
+    ],
+
     "other": [
-      "Basics of graphic design & SVG",
-      "Organization sense and teamwork",
-      "Web development & AI tools"
+      "Organization",
+      "Teamwork",
+      "Adaptability",
+      "Autonomy",
+      "Fast learning",
+      "Problem solving",
+      "Communication"
     ]
   },
 
   "languages": [
-    { "language": "Arabic", "level": "Native" },
-    { "language": "French", "level": "Advanced" },
-    { "language": "English", "level": "Excellent" },
-    { "language": "Spanish", "level": "Intermediate" }
+    {
+      "language": "Arabic",
+      "level": "Native"
+    },
+    {
+      "language": "French",
+      "level": "Advanced"
+    },
+    {
+      "language": "English",
+      "level": "Excellent"
+    },
+    {
+      "language": "Spanish",
+      "level": "Intermediate"
+    }
   ],
 
   "experience": [
     {
-      "role": "Internship at SGTM",
+      "role": "Electrical Maintenance and Installation Intern",
+      "company": "SGTM",
       "field": "Maintenance and installation of heavy electrical equipment",
+      "tasks": [
+        "Electrical installation work",
+        "Preventive maintenance",
+        "Corrective maintenance",
+        "Electrical cabinet work",
+        "Electrical wiring",
+        "Power and signal cables",
+        "Contactors",
+        "Circuit breakers",
+        "Thermal overload relays",
+        "Actuators",
+        "Basic industrial automation systems"
+      ],
       "note": "Received a work certificate"
     }
   ],
 
   "certifications": [
     "Volunteer Certificate - CAF 2025",
-    "Graphic Design Certificate OFPPT - CYCM",
+    "Graphic Design Certificate - OFPPT CYCM",
     "PMC Certificate - WAFOON 2026"
   ],
 
+  "personal_services": [
+    "Website development",
+    "Landing page development",
+    "Web design",
+    "AI assistant development",
+    "AI-powered digital solutions",
+    "Graphic design",
+    "SVG design",
+    "Digital content creation",
+    "Solar energy solutions",
+    "Photovoltaic system design",
+    "Electrical installation",
+    "Electrical maintenance",
+    "Electrical troubleshooting",
+    "Digital project development"
+  ],
+
   "projects": [
-    "Personal links page",
-    "AI assistant for personal info",
-    "Renewable energy solutions",
-    "Photovoltaic systems"
+    {
+      "name": "Personal Links Page",
+      "type": "Web Project",
+      "description": "A personal digital page gathering professional information, projects and important links."
+    },
+    {
+      "name": "Personal AI Assistant",
+      "type": "Artificial Intelligence",
+      "description": "An AI assistant designed to provide information about Wassim, his skills, experience, education and projects."
+    },
+    {
+      "name": "Renewable Energy Solutions",
+      "type": "Renewable Energy",
+      "description": "Projects and concepts related to solar energy and photovoltaic systems."
+    },
+    {
+      "name": "Photovoltaic Systems",
+      "type": "Solar Energy",
+      "description": "Study and design of photovoltaic systems including panels, regulators, inverters, batteries and electrical calculations."
+    }
   ],
 
   "companies": [
     {
       "name": "Warstom",
-      "website": "warstom.com",
       "role": "Founder & CEO",
+      "website": "https://warstom.com",
       "status": "Under Development - Coming Soon",
       "expected_launch": "03-2027",
       "category": "Digital Service Marketplace",
       "tagline": "The all-in-one marketplace for digital services.",
-      "short_description": "A digital service marketplace that connects clients, freelancers, professionals, and businesses in one platform.",
-      "description": "Warstom is a digital service marketplace that connects clients, freelancers, professionals, and businesses in one platform, allowing users to discover, compare, and purchase a wide range of services online. The platform covers multiple categories, including Programming & Tech, AI Services, Graphic & Design, Digital Marketing, Writing & Translation, Video & Animation, Music & Audio, Business, Finance, Data, Photography, Consulting, and Personal Growth. Freelancers and service providers can showcase their skills, create service offers, build professional profiles, receive orders, communicate with clients, and grow their reputation through ratings, reviews, levels, and badges. Warstom also includes advertising and promotional services, creative and technical services, AI-powered services, business solutions, secure payments, transaction protection, customer support, and a dedicated AI assistant designed to help users discover services and navigate the platform.",
+      "description": "Warstom is a digital service marketplace connecting clients, freelancers, professionals and businesses. Users can discover, compare and purchase digital services, while sellers can create profiles, publish services, receive orders, communicate with clients and build their reputation.",
       "features": [
-        "Discover, compare and purchase services online",
-        "Multiple categories: Programming, AI, Design, Marketing, Writing, Video, Music, Business, Finance, Data, Photography, Consulting, Personal Growth",
-        "Freelancers can showcase skills and create service offers",
-        "Professional profiles with ratings, reviews, levels and badges",
-        "Order management and client communication",
-        "Advertising and promotional services",
-        "Creative and technical services",
-        "AI-powered services and business solutions",
-        "Secure payments and transaction protection",
-        "Customer support and dedicated AI assistant (Weyra AI)"
-      ],
-      "mission": "To become a comprehensive digital marketplace for services, where customers can easily find the right professionals for their needs, while freelancers and businesses can showcase their expertise and reach new clients."
+        "Digital service marketplace",
+        "Seller profiles",
+        "Service discovery",
+        "Service offers",
+        "Order management",
+        "Client-seller communication",
+        "Ratings and reviews",
+        "Seller levels and badges",
+        "Advertising and promotion",
+        "Secure payments",
+        "Customer support",
+        "AI-powered assistance"
+      ]
     },
+
     {
       "name": "Weyra AI",
-      "website": "weyra.ai",
       "role": "Founder",
+      "website": "https://weyra.ai",
       "status": "Under Development - Coming Soon",
       "expected_launch": "03-2027",
-      "category": "AI Assistant / Support Layer",
+      "category": "AI Assistant",
       "tagline": "The intelligent assistant inside the Warstom ecosystem.",
-      "short_description": "An integrated AI assistant and support layer within the Warstom ecosystem, designed to help users navigate the platform.",
-      "description": "Weyra AI is not a separate service from Warstom; it is an integrated AI assistant and support layer within the Warstom ecosystem, similar in concept to how Meta integrates AI across its platforms. Weyra is designed to help users throughout their experience on Warstom, making the platform easier to use by helping them find and understand services, navigate the platform, get answers, solve problems, understand orders and payments, and receive guidance when they are unsure what to do. It also acts as the first-line support assistant when a user encounters a problem, while more complex issues can be escalated to human support.",
-      "features": [
-        "Integrated AI assistant inside Warstom",
-        "Helps users find and understand services",
-        "Guides navigation across the platform",
-        "Answers questions and solves problems",
-        "Explains orders and payments",
-        "Provides guidance when users are unsure",
-        "First-line support assistant",
-        "Escalates complex issues to human support",
-        "Part of the Warstom ecosystem (not standalone)"
+      "parent_project": "Warstom",
+      "description": "Weyra AI is the integrated AI assistant inside the Warstom ecosystem. It helps users understand and navigate Warstom, discover services, solve problems, understand orders and payments, and get support when they are stuck or unsure what to do.",
+      "role_inside_warstom": [
+        "AI assistant",
+        "User guidance",
+        "Platform navigation",
+        "Service discovery assistance",
+        "Order assistance",
+        "Payment guidance",
+        "Problem solving",
+        "First-line support",
+        "Human support escalation for complex issues"
       ],
-      "mission": "To be the intelligent assistant that helps users use and understand the entire Warstom ecosystem — while more complex issues escalate to human support."
+      "important_note": "Weyra AI is part of Warstom and is not an independent marketplace or separate service marketplace."
     },
+
     {
       "name": "4-Event",
-      "website": "4-event.fun",
       "role": "Co-Founder",
+      "website": "https://4-event.fun",
       "status": "Coming Soon",
       "expected_launch": "11-2026",
       "category": "Event & Party Platform",
-      "tagline": "Create, organize, promote and attend events — all in one place.",
-      "short_description": "A digital event and party platform for creating, organizing, promoting, managing and attending events.",
-      "description": "4Event is a digital event and party platform designed to make it easier to create, organize, promote, manage, and attend events in one place. The platform is focused on connecting event organizers, party hosts, and attendees. Organizers can create events, provide event details, manage attendees, sell or distribute tickets, and verify tickets through QR codes and scanning. 4Event is also designed to support event promotion and help attendees discover upcoming parties and events, while providing organizers with tools to manage their events and control access on the day of the event.",
+      "tagline": "Create, organize, promote and attend events - all in one place.",
+      "description": "4-Event is a digital platform for creating, organizing, promoting, managing and attending events and parties. It connects event organizers, party hosts and attendees through one platform.",
       "features": [
-        "Create and organize events and parties",
-        "Promote events and reach attendees",
-        "Manage attendees and event details",
-        "Sell or distribute tickets online",
-        "QR code ticket verification",
-        "On-site scanning for event access",
-        "Discover upcoming parties and events",
-        "All-in-one event management tools",
-        "Connection between organizers, hosts and attendees"
+        "Create events",
+        "Organize events",
+        "Promote events",
+        "Manage attendees",
+        "Ticket distribution",
+        "Ticket sales",
+        "QR code tickets",
+        "QR code verification",
+        "On-site ticket scanning",
+        "Event discovery",
+        "Organizer management"
       ],
-      "mission": "To be an all-in-one digital platform for events and parties, making the process simpler for both organizers and attendees — from discovering an event and getting a ticket to verification and entry."
+      "important_note": "4-Event is an independent project and is not a Warstom subproduct."
     },
+
     {
       "name": "Solarax",
-      "website": "solarax.ma",
       "role": "Founder",
+      "website": "https://solarax.ma",
       "status": "Planned",
       "expected_launch": "2028",
       "category": "Solar Energy Company & Service Platform",
       "tagline": "Professional solar panel installation and complete solar energy systems.",
-      "short_description": "A solar energy company and service platform providing professional solar panel installation and complete solar energy systems.",
-      "description": "Solarax is a solar energy company and service platform that provides customers with professional solar panel installation and complete solar energy systems. The company works with its own network of skilled technicians and professionals who are responsible for installing, configuring, and maintaining solar energy solutions for homes, businesses, farms, and other projects. Customers come to Solarax to request a solar solution, while Solarax handles the process from understanding the customer's needs to providing the appropriate system and carrying out the installation through its professional team.",
-      "features": [
-        "Professional solar panel installation",
+      "description": "Solarax is a solar energy company and service platform providing professional solar panel installation and complete solar energy systems. Customers request a solar solution and Solarax handles the assessment, system design, installation, configuration and maintenance through its own professional network of skilled technicians.",
+      "services": [
+        "Solar panel installation",
         "Complete solar energy systems",
-        "Own network of skilled technicians",
-        "Installation, configuration and maintenance",
-        "Solutions for homes, businesses and farms",
-        "Custom solar solutions per project",
-        "Customer needs assessment",
-        "End-to-end service (from request to installation)",
-        "Renewable energy focus in Morocco"
+        "Solar system assessment",
+        "Photovoltaic system design",
+        "System installation",
+        "System configuration",
+        "Solar system maintenance",
+        "Residential solar solutions",
+        "Business solar solutions",
+        "Agricultural and farm solar solutions",
+        "Custom solar solutions"
       ],
-      "mission": "To make solar energy more accessible by providing professional installation, reliable solar systems, maintenance, and renewable energy solutions through one organized service."
+      "team_model": "Solarax works with its own professional network of skilled technicians who perform installation, configuration and maintenance.",
+      "important_note": "Solarax is not a marketplace where customers search for independent technicians. The technicians are part of the Solarax service network."
     }
   ],
+
+  "ecosystem": {
+    "Warstom": {
+      "type": "Digital Service Marketplace",
+      "role": "Main digital marketplace"
+    },
+    "Weyra AI": {
+      "type": "Integrated AI Assistant",
+      "parent": "Warstom",
+      "role": "AI support and guidance layer"
+    },
+    "4-Event": {
+      "type": "Event & Party Platform",
+      "relationship": "Independent project"
+    },
+    "Solarax": {
+      "type": "Solar Energy Company & Service Platform",
+      "relationship": "Independent project",
+      "team_model": "Own professional technician network"
+    }
+  },
+
+  "project_relationships": {
+    "Warstom": "Main digital service marketplace.",
+    "Weyra AI": "Integrated AI assistant and support layer inside Warstom.",
+    "4-Event": "Independent event and party platform.",
+    "Solarax": "Independent solar energy company and service platform with its own professional installation network."
+  },
+
+  "goals": {
+    "short_term": [
+      "Develop professional experience in electrical engineering",
+      "Gain practical experience in electrical maintenance and automation",
+      "Develop skills in renewable energy and photovoltaic systems",
+      "Continue improving web development and AI skills",
+      "Develop current digital projects"
+    ],
+    "medium_term": [
+      "Build stronger expertise in renewable energy",
+      "Develop professional experience in solar energy",
+      "Grow Warstom",
+      "Launch 4-Event",
+      "Develop Weyra AI",
+      "Prepare Solarax"
+    ],
+    "long_term": [
+      "Build successful technology and renewable-energy businesses",
+      "Develop innovative digital platforms",
+      "Combine electrical engineering, renewable energy, AI and technology",
+      "Build professional teams and scalable projects"
+    ]
+  },
 
   "interests": [
     "Artificial Intelligence",
     "Renewable Energy",
+    "Solar Energy",
     "Web Development",
     "Graphic Design",
-    "Open Source"
+    "Electrical Engineering",
+    "Automation",
+    "Digital Innovation",
+    "Open Source",
+    "Entrepreneurship"
   ],
+
+  "professional_profile": {
+    "current_role": "Founder & Entrepreneur",
+    "primary_domains": [
+      "Electrical Engineering",
+      "Renewable Energy",
+      "Solar Energy"
+    ],
+    "secondary_domains": [
+      "Web Development",
+      "Artificial Intelligence",
+      "Graphic Design",
+      "Digital Creation"
+    ],
+    "work_style": [
+      "Serious",
+      "Versatile",
+      "Adaptable",
+      "Autonomous",
+      "Team-oriented",
+      "Fast learner",
+      "Problem solver"
+    ]
+  },
+
+  "preferences": {
+    "communication": {
+      "preferred_style": "Clear, direct and practical",
+      "preferred_languages": [
+        "Darija",
+        "French",
+        "English"
+      ]
+    },
+    "professional_focus": [
+      "Practical technical work",
+      "Renewable energy",
+      "Solar energy",
+      "Electrical maintenance",
+      "Industrial automation",
+      "Technology",
+      "AI",
+      "Entrepreneurship"
+    ]
+  },
 
   "social": {
     "instagram": "https://www.instagram.com/waa_ss_iiim",
@@ -215,5 +432,17 @@
     "facebook": "https://facebook.com/wassim.kt.9",
     "linkedin": "https://www.linkedin.com/in/wassim-el-koztit-894596385",
     "github": "https://github.com/wassimkoztit"
-  }
+  },
+
+  "ai_context_rules": [
+    "Do not confuse Wassim's personal skills with the services of his companies.",
+    "Warstom is a digital service marketplace.",
+    "Weyra AI is part of Warstom and functions as its integrated AI assistant and support layer.",
+    "4-Event is an independent event and party platform.",
+    "Solarax is an independent solar energy company and service platform.",
+    "Solarax has its own professional network of skilled technicians.",
+    "Do not describe Solarax as a freelancer marketplace.",
+    "Distinguish between planned, under-development and launched projects.",
+    "Do not present old Warstom service packages as the current core business model unless specifically requested."
+  ]
 }
