@@ -111,7 +111,23 @@
       "role": "Founder & CEO",
       "status": "Under Development - Coming Soon",
       "expected_launch": "03-2027",
-      "description": "Warstom is a tech company focused on building innovative digital platforms and AI solutions."
+      "category": "Digital Service Marketplace",
+      "tagline": "The all-in-one marketplace for digital services.",
+      "short_description": "A digital service marketplace that connects clients, freelancers, professionals, and businesses in one platform.",
+      "description": "Warstom is a digital service marketplace that connects clients, freelancers, professionals, and businesses in one platform, allowing users to discover, compare, and purchase a wide range of services online. The platform covers multiple categories, including Programming & Tech, AI Services, Graphic & Design, Digital Marketing, Writing & Translation, Video & Animation, Music & Audio, Business, Finance, Data, Photography, Consulting, and Personal Growth. Freelancers and service providers can showcase their skills, create service offers, build professional profiles, receive orders, communicate with clients, and grow their reputation through ratings, reviews, levels, and badges. Warstom also includes advertising and promotional services, creative and technical services, AI-powered services, business solutions, secure payments, transaction protection, customer support, and a dedicated AI assistant designed to help users discover services and navigate the platform.",
+      "features": [
+        "Discover, compare and purchase services online",
+        "Multiple categories: Programming, AI, Design, Marketing, Writing, Video, Music, Business, Finance, Data, Photography, Consulting, Personal Growth",
+        "Freelancers can showcase skills and create service offers",
+        "Professional profiles with ratings, reviews, levels and badges",
+        "Order management and client communication",
+        "Advertising and promotional services",
+        "Creative and technical services",
+        "AI-powered services and business solutions",
+        "Secure payments and transaction protection",
+        "Customer support and dedicated AI assistant (Weyra AI)"
+      ],
+      "mission": "To become a comprehensive digital marketplace for services, where customers can easily find the right professionals for their needs, while freelancers and businesses can showcase their expertise and reach new clients."
     },
     {
       "name": "Weyra AI",
@@ -119,7 +135,22 @@
       "role": "Founder",
       "status": "Under Development - Coming Soon",
       "expected_launch": "03-2027",
-      "description": "Weyra is an AI assistant platform, built in partnership with the Warstom platform."
+      "category": "AI Assistant / Support Layer",
+      "tagline": "The intelligent assistant inside the Warstom ecosystem.",
+      "short_description": "An integrated AI assistant and support layer within the Warstom ecosystem, designed to help users navigate the platform.",
+      "description": "Weyra AI is not a separate service from Warstom; it is an integrated AI assistant and support layer within the Warstom ecosystem, similar in concept to how Meta integrates AI across its platforms. Weyra is designed to help users throughout their experience on Warstom, making the platform easier to use by helping them find and understand services, navigate the platform, get answers, solve problems, understand orders and payments, and receive guidance when they are unsure what to do. It also acts as the first-line support assistant when a user encounters a problem, while more complex issues can be escalated to human support.",
+      "features": [
+        "Integrated AI assistant inside Warstom",
+        "Helps users find and understand services",
+        "Guides navigation across the platform",
+        "Answers questions and solves problems",
+        "Explains orders and payments",
+        "Provides guidance when users are unsure",
+        "First-line support assistant",
+        "Escalates complex issues to human support",
+        "Part of the Warstom ecosystem (not standalone)"
+      ],
+      "mission": "To be the intelligent assistant that helps users use and understand the entire Warstom ecosystem — while more complex issues escalate to human support."
     },
     {
       "name": "4-Event",
@@ -127,7 +158,22 @@
       "role": "Co-Founder",
       "status": "Coming Soon",
       "expected_launch": "11-2026",
-      "description": "4-Event is an event platform for discovering, creating and sharing events."
+      "category": "Event & Party Platform",
+      "tagline": "Create, organize, promote and attend events — all in one place.",
+      "short_description": "A digital event and party platform for creating, organizing, promoting, managing and attending events.",
+      "description": "4Event is a digital event and party platform designed to make it easier to create, organize, promote, manage, and attend events in one place. The platform is focused on connecting event organizers, party hosts, and attendees. Organizers can create events, provide event details, manage attendees, sell or distribute tickets, and verify tickets through QR codes and scanning. 4Event is also designed to support event promotion and help attendees discover upcoming parties and events, while providing organizers with tools to manage their events and control access on the day of the event.",
+      "features": [
+        "Create and organize events and parties",
+        "Promote events and reach attendees",
+        "Manage attendees and event details",
+        "Sell or distribute tickets online",
+        "QR code ticket verification",
+        "On-site scanning for event access",
+        "Discover upcoming parties and events",
+        "All-in-one event management tools",
+        "Connection between organizers, hosts and attendees"
+      ],
+      "mission": "To be an all-in-one digital platform for events and parties, making the process simpler for both organizers and attendees — from discovering an event and getting a ticket to verification and entry."
     },
     {
       "name": "Solarax",
@@ -135,7 +181,22 @@
       "role": "Founder",
       "status": "Planned",
       "expected_launch": "2028",
-      "description": "Solarax is a renewable energy company focused on solar solutions in Morocco."
+      "category": "Solar Energy Company & Service Platform",
+      "tagline": "Professional solar panel installation and complete solar energy systems.",
+      "short_description": "A solar energy company and service platform providing professional solar panel installation and complete solar energy systems.",
+      "description": "Solarax is a solar energy company and service platform that provides customers with professional solar panel installation and complete solar energy systems. The company works with its own network of skilled technicians and professionals who are responsible for installing, configuring, and maintaining solar energy solutions for homes, businesses, farms, and other projects. Customers come to Solarax to request a solar solution, while Solarax handles the process from understanding the customer's needs to providing the appropriate system and carrying out the installation through its professional team.",
+      "features": [
+        "Professional solar panel installation",
+        "Complete solar energy systems",
+        "Own network of skilled technicians",
+        "Installation, configuration and maintenance",
+        "Solutions for homes, businesses and farms",
+        "Custom solar solutions per project",
+        "Customer needs assessment",
+        "End-to-end service (from request to installation)",
+        "Renewable energy focus in Morocco"
+      ],
+      "mission": "To make solar energy more accessible by providing professional installation, reliable solar systems, maintenance, and renewable energy solutions through one organized service."
     }
   ],
 
