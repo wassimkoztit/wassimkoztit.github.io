@@ -29,32 +29,51 @@ body {
 
 
 /* ========================================
-   SCROLLBAR
+   SCROLLBAR — transparent background
 ======================================== */
 
+/* Chrome / Edge / Safari */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--scrollbar-track);
+    background: transparent;
+    border: none;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--secondary-gradient);
+    background: linear-gradient(45deg, #9900ff, #3795bd);
     border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    box-shadow: 0 0 6px rgba(139, 92, 246, 0.5);
 }
 
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(45deg, #7a00cc, #2b7898);
+    background-clip: padding-box;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.8);
 }
 
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Firefox — transparent track */
 * {
     scrollbar-width: thin;
-    scrollbar-color: #9900ff var(--scrollbar-track);
+    scrollbar-color: #9900ff transparent;
 }
 
+/* For Firefox, override with a light color if track invisible */
+@supports (scrollbar-color: red blue) {
+    html,
+    body {
+        scrollbar-color: #9900ff transparent;
+    }
+}
 
 /* ========================================
    PAGE
@@ -387,7 +406,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
     overflow: hidden;
     padding: 3px;
 }
@@ -426,6 +444,11 @@ body {
     transition: background 0.2s ease, color 0.2s ease;
 }
 
+
+.link-icon img{
+    width: 30px;
+}
+
 .ai-chat-close:hover {
     background: rgba(239, 68, 68, 0.15);
     color: #ef4444;
@@ -438,6 +461,10 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.ai-chat-messages img {
+    width: 100px;
 }
 
 .ai-message {
@@ -486,8 +513,8 @@ body {
 }
 
 .ai-typing-logo {
-    width: 32px;
-    height: 32px;
+    width: 20px;
+    height: 20px;
     object-fit: contain;
     border-radius: 50%;
 
@@ -711,4 +738,78 @@ body {
         height: 39px;
     }
 
+}
+
+
+/* ========================================
+   SCROLL TO BOTTOM BUTTON
+======================================== */
+
+.ai-scroll-bottom {
+    position: absolute;
+
+    /* Center horizontally, above the input area */
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+
+    /* Distance from bottom (above input wrapper) */
+    bottom: 78px;
+
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+
+    box-shadow:
+        0 6px 20px rgba(139, 92, 246, 0.45),
+        0 0 12px rgba(139, 92, 246, 0.3);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease,
+        transform 0.25s ease,
+        box-shadow 0.2s ease;
+
+    z-index: 20;
+}
+
+.ai-scroll-bottom.visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+.ai-scroll-bottom:hover {
+    box-shadow:
+        0 8px 24px rgba(139, 92, 246, 0.7),
+        0 0 16px rgba(139, 92, 246, 0.5);
+}
+
+.ai-scroll-bottom:active {
+    transform: translateX(-50%) scale(0.92);
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+    .ai-scroll-bottom {
+        width: 34px;
+        height: 34px;
+        font-size: 12px;
+        bottom: 74px;
+    }
 }
