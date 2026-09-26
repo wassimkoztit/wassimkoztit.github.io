@@ -55,8 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // ----------------------------------------
     // STATE
     // ----------------------------------------
-    let userData = null;
-    let lastReplies = {};
+    window.userData = null;
+    window.lastReplies = {};
 
     // ----------------------------------------
     // DOM ELEMENTS
@@ -75,11 +75,10 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch("me.json")
         .then(res => res.json())
         .then(data => {
-            userData = data;
+            window.userData = data;
             console.log("AI data loaded:", data.name);
         })
         .catch(err => console.error("Failed to load me.json:", err));
-
 
     // ----------------------------------------
     // OPEN MODAL
@@ -139,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setTimeout(() => {
             typingEl.remove();
-            const reply = getAIResponse(text, userData, lastReplies);
+            const reply = getAIResponse(text, window.userData, window.lastReplies);
             addMessage(reply, "bot", true);
         }, 1400);
     }
@@ -307,6 +306,8 @@ const STOP_WORDS = new Set([
 function pickRandom(intentName, options, lastReplies) {
     if (!options || options.length === 0) return () => "";
     if (options.length === 1) return options[0];
+
+    lastReplies = lastReplies || window.lastReplies || (window.lastReplies = {});
 
     let last = lastReplies[intentName];
     let choice;
@@ -920,9 +921,13 @@ function scoreIntent(question, intent) {
 // ========================================
 
 function getAIResponse(question, userData, lastReplies) {
+    userData = userData || window.userData;
+    lastReplies = lastReplies || window.lastReplies;
+
     if (!userData) {
         return "Still loading my data... try again in a second.";
     }
+    
 
     // 1. MATH
     const mathResult = tryMath(question);
