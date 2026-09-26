@@ -67,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const aiSend     = document.getElementById("aiChatSend");
     const aiMessages = document.getElementById("aiChatMessages");
     const aiTrigger  = document.querySelector(".ai-chat-trigger");
+    const aiScrollBottom = document.getElementById("aiScrollBottom");
 
     // ----------------------------------------
     // LOAD me.json
@@ -128,12 +129,13 @@ document.addEventListener("DOMContentLoaded", () => {
         addMessage(text, "user");
         aiInput.value = "";
 
-        // Show inline typing loader with rotating Weyra logo
         const typingEl = document.createElement("div");
         typingEl.className = "ai-message ai-message-bot ai-message-typing";
         typingEl.innerHTML = '<img src="20260923_152215.png" alt="Weyra AI" class="ai-typing-logo">';
         aiMessages.appendChild(typingEl);
         aiMessages.scrollTop = aiMessages.scrollHeight;
+
+        updateScrollButton();
 
         setTimeout(() => {
             typingEl.remove();
@@ -156,7 +158,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
         aiMessages.appendChild(el);
         aiMessages.scrollTop = aiMessages.scrollHeight;
+
+        // Update button visibility
+        updateScrollButton();
     }
+
+
+        // ----------------------------------------
+    // SCROLL-TO-BOTTOM BUTTON LOGIC
+    // ----------------------------------------
+
+    function updateScrollButton() {
+        if (!aiMessages || !aiScrollBottom) return;
+
+        const distanceFromBottom =
+            aiMessages.scrollHeight - aiMessages.scrollTop - aiMessages.clientHeight;
+
+        // Show button if user scrolled up by more than 80px
+        if (distanceFromBottom > 80) {
+            aiScrollBottom.classList.add("visible");
+        } else {
+            aiScrollBottom.classList.remove("visible");
+        }
+    }
+
+    aiMessages?.addEventListener("scroll", updateScrollButton);
+
+    aiScrollBottom?.addEventListener("click", () => {
+        aiMessages?.scrollTo({
+            top: aiMessages.scrollHeight,
+            behavior: "smooth"
+        });
+    });
 
 });
 
