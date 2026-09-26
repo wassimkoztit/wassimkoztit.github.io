@@ -53,20 +53,25 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
 
     // ----------------------------------------
-    // STATE
+    // STATE (global)
     // ----------------------------------------
     window.userData = null;
     window.lastReplies = {};
+    window.lastTopic = null;
+    window.lastList = null;
+    window.lastMessage = "";
+    window.repeatCount = 0;
+    window._lastQuestion = "";
 
     // ----------------------------------------
     // DOM ELEMENTS
     // ----------------------------------------
-    const aiModal    = document.getElementById("aiChatModal");
-    const aiClose    = document.getElementById("aiChatClose");
-    const aiInput    = document.getElementById("aiChatInput");
-    const aiSend     = document.getElementById("aiChatSend");
-    const aiMessages = document.getElementById("aiChatMessages");
-    const aiTrigger  = document.querySelector(".ai-chat-trigger");
+    const aiModal        = document.getElementById("aiChatModal");
+    const aiClose        = document.getElementById("aiChatClose");
+    const aiInput        = document.getElementById("aiChatInput");
+    const aiSend         = document.getElementById("aiChatSend");
+    const aiMessages     = document.getElementById("aiChatMessages");
+    const aiTrigger      = document.querySelector(".ai-chat-trigger");
     const aiScrollBottom = document.getElementById("aiScrollBottom");
 
     // ----------------------------------------
@@ -79,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("AI data loaded:", data.name);
         })
         .catch(err => console.error("Failed to load me.json:", err));
+
 
     // ----------------------------------------
     // OPEN MODAL
@@ -111,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // ----------------------------------------
-    // SEND MESSAGE
+    // SEND MESSAGE (with anti-spam)
     // ----------------------------------------
     aiSend?.addEventListener("click", sendMessage);
 
@@ -119,14 +125,36 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key === "Enter") sendMessage();
     });
 
-    function sendMessage() {
+    function sendMessage(forcedText) {
         if (!aiInput || !aiMessages) return;
 
-        const text = aiInput.value.trim();
+        const text = typeof forcedText === "string"
+            ? forcedText.trim()
+            : aiInput.value.trim();
+
         if (!text) return;
 
+        // Store last question for context (used by "more <company>")
+        window._lastQuestion = text;
+
+        // Anti-spam: same message repeated 3+ times
+        if (text.toLowerCase() === window.lastMessage.toLowerCase()) {
+            window.repeatCount++;
+            if (window.repeatCount >= 3) {
+                addMessage("You've asked that 3 times! 😅 Try asking differently or say 'help' to see what I can do.", "bot");
+                window.repeatCount = 0;
+                return;
+            }
+        } else {
+            window.repeatCount = 0;
+            window.lastMessage = text;
+        }
+
+        if (typeof forcedText !== "string") {
+            aiInput.value = "";
+        }
+
         addMessage(text, "user");
-        aiInput.value = "";
 
         const typingEl = document.createElement("div");
         typingEl.className = "ai-message ai-message-bot ai-message-typing";
@@ -143,6 +171,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1400);
     }
 
+
+    // ----------------------------------------
+    // ADD MESSAGE
+    // ----------------------------------------
     function addMessage(text, type, allowLinks = false) {
         if (!aiMessages) return;
 
@@ -158,22 +190,29 @@ document.addEventListener("DOMContentLoaded", () => {
         aiMessages.appendChild(el);
         aiMessages.scrollTop = aiMessages.scrollHeight;
 
-        // Update button visibility
         updateScrollButton();
     }
 
 
-        // ----------------------------------------
-    // SCROLL-TO-BOTTOM BUTTON LOGIC
     // ----------------------------------------
+    // SUGGESTION CLICK HANDLER
+    // ----------------------------------------
+    window.sendSuggestion = function(text) {
+        if (!aiInput) return;
+        aiInput.value = text;
+        sendMessage();
+    };
 
+
+    // ----------------------------------------
+    // SCROLL-TO-BOTTOM BUTTON
+    // ----------------------------------------
     function updateScrollButton() {
         if (!aiMessages || !aiScrollBottom) return;
 
         const distanceFromBottom =
             aiMessages.scrollHeight - aiMessages.scrollTop - aiMessages.clientHeight;
 
-        // Show button if user scrolled up by more than 80px
         if (distanceFromBottom > 80) {
             aiScrollBottom.classList.add("visible");
         } else {
@@ -206,9 +245,20 @@ function renderWithLinks(text) {
     safe = safe.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
     safe = safe.replace(/\n/g, "<br>");
 
+    // [label](url) → button link
     safe = safe.replace(
         /\[([^\]]+)\]\((https?:\/\/[^\s)]+|mailto:[^\s)]+)\)/g,
         '<a href="$2" target="_blank" rel="noopener noreferrer" class="ai-link-btn">$1 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'
+    );
+
+    // Restore suggestion block (unescape HTML inside the placeholder)
+    safe = safe.replace(
+        /%%SUGGESTIONS%%([\s\S]*?)%%\/SUGGESTIONS%%/g,
+        (match, inner) => inner
+            .replace(/&lt;/g, "<")
+            .replace(/&gt;/g, ">")
+            .replace(/&amp;/g, "&")
+            .replace(/&quot;/g, '"')
     );
 
     return safe;
@@ -227,6 +277,219 @@ function normalize(str) {
         .replace(/[^\w\s]/g, " ")
         .replace(/\s+/g, " ")
         .trim();
+}
+
+
+// ========================================
+// TYPO FIXES
+// ========================================
+
+const TYPO_FIXES = {
+    // ----------------------------------------
+    // SMS / CHAT SHORTHAND
+    // ----------------------------------------
+    "wat": "what",
+    "wats": "what is",
+    "wot": "what",
+    "hw": "how",
+    "hru": "how are you",
+    "howru": "how are you",
+    "u": "you",
+    "ur": "your",
+    "urs": "yours",
+    "r": "are",
+    "r u": "are you",
+    "pls": "please",
+    "plz": "please",
+    "thx": "thanks",
+    "ty": "thank you",
+    "tq": "thank you",
+    "np": "no problem",
+    "idk": "i don't know",
+    "idc": "i don't care",
+    "btw": "by the way",
+    "fyi": "for your information",
+    "asap": "as soon as possible",
+    "im": "i am",
+    "ive": "i have",
+    "ill": "i will",
+    "dont": "don't",
+    "doesnt": "doesn't",
+    "cant": "can't",
+    "wont": "won't",
+    "isnt": "isn't",
+    "arent": "aren't",
+    "wasnt": "wasn't",
+    "werent": "weren't",
+    "wanna": "want",
+    "wanna to": "want to",
+    "gonna": "going",
+    "gotta": "got to",
+    "kinda": "kind of",
+    "sorta": "sort of",
+    "lemme": "let me",
+    "gimme": "give me",
+    "cuz": "because",
+    "coz": "because",
+    "becoz": "because",
+
+    // ----------------------------------------
+    // NAMES / BRANDS
+    // ----------------------------------------
+    "wasim": "wassim",
+    "wasm": "wassim",
+    "wassm": "wassim",
+    "wassem": "wassim",
+    "wassime": "wassim",
+    "wasiim": "wassim",
+    "waseem": "wassim",
+    "weyrah": "weyra",
+    "weyraa": "weyra",
+    "wiera": "weyra",
+    "warstome": "warstom",
+    "warstm": "warstom",
+    "wastrom": "warstom",
+    "wrstom": "warstom",
+    "solaraks": "solarax",
+    "solrax": "solarax",
+    "solarx": "solarax",
+    "4evnt": "4event",
+    "4ev": "4event",
+    "4vnt": "4event"
+};
+
+// ========================================
+// ADVANCED TYPO HANDLER
+// ========================================
+
+function fixTypos(text) {
+    let fixed = text;
+
+    // 1. Apply SMS shorthand dictionary
+    fixed = applyShorthand(fixed);
+
+    // 2. Collapse repeated letters (3+ → 1)
+    //    "helloooo" → "hello", "skiiills" → "skills"
+    fixed = collapseRepeated(fixed);
+
+    // 3. Fix leet/numbers inside words
+    //    "sk1lls" → "skills", "c0ntact" → "contact"
+    fixed = fixLeetSpeak(fixed);
+
+    // 4. Split glued words (best-effort)
+    //    "whatishisemail" → "what is his email"
+    fixed = splitGlued(fixed);
+
+    return fixed;
+}
+
+
+// ----------------------------------------
+// 1. Apply SMS shorthand
+// ----------------------------------------
+function applyShorthand(text) {
+    let out = text;
+    // Sort by length descending so "r u" is replaced before "r"
+    const keys = Object.keys(TYPO_FIXES).sort((a, b) => b.length - a.length);
+
+    keys.forEach(from => {
+        const to = TYPO_FIXES[from];
+        const escaped = from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const regex = new RegExp(`\\b${escaped}\\b`, "gi");
+        out = out.replace(regex, to);
+    });
+
+    return out;
+}
+
+
+// ----------------------------------------
+// 2. Collapse repeated letters
+//    "helloooo" → "hello"
+//    "skiiiiillsss" → "skills"
+// ----------------------------------------
+function collapseRepeated(text) {
+    return text.replace(/([a-zA-Z])\1{2,}/g, "$1");
+}
+
+
+// ----------------------------------------
+// 3. Fix leet speak inside words
+//    0 → o, 1 → i/l, 3 → e, 4 → a, 5 → s, 7 → t, @ → a
+// ----------------------------------------
+function fixLeetSpeak(text) {
+    return text
+        .replace(/([a-zA-Z])0([a-zA-Z])/g, "$1o$2")   // sk0lls → skolls
+        .replace(/([a-zA-Z])1([a-zA-Z])/g, "$1i$2")   // sk1lls → skills
+        .replace(/([a-zA-Z])3([a-zA-Z])/g, "$1e$2")   // h3llo → hello
+        .replace(/([a-zA-Z])4([a-zA-Z])/g, "$1a$2")   // w4ssim → wassim
+        .replace(/([a-zA-Z])5([a-zA-Z])/g, "$1s$2")   // wa55im → wassim
+        .replace(/([a-zA-Z])7([a-zA-Z])/g, "$1t$2")   // con7act → contact
+        .replace(/@/g, "a");
+}
+
+
+// ----------------------------------------
+// 4. Split glued words (best-effort)
+//    "whatishisemail" → "what is his email"
+//    "tellmeaboutwarstom" → "tell me about warstom"
+// ----------------------------------------
+const GLUED_WORDS = [
+    "what", "is", "his", "her", "the", "about", "tell", "me",
+    "how", "can", "i", "you", "your", "contact", "him", "her",
+    "email", "phone", "whatsapp", "warstom", "weyra", "solarax",
+    "event", "skills", "skill", "company", "companies", "birthday",
+    "location", "education", "experience", "projects", "name",
+    "who", "where", "when", "why", "more", "details", "show",
+    "give", "get", "find", "help", "hi", "hello", "and", "or"
+];
+
+function splitGlued(text) {
+    // Only try to split words with no spaces that are long
+    return text.replace(/\b([a-z]{12,})\b/gi, (word) => {
+        const lower = word.toLowerCase();
+
+        // Don't touch if already contains known words
+        if (GLUED_WORDS.some(w => lower.startsWith(w))) {
+            return greedySplit(lower);
+        }
+        return word;
+    });
+}
+
+function greedySplit(word) {
+    const result = [];
+    let remaining = word;
+
+    // Sort by length desc to prefer longer matches
+    const sorted = [...GLUED_WORDS].sort((a, b) => b.length - a.length);
+
+    let safety = 0;
+    while (remaining.length > 0 && safety < 20) {
+        safety++;
+        let matched = false;
+
+        for (const w of sorted) {
+            if (remaining.startsWith(w)) {
+                result.push(w);
+                remaining = remaining.slice(w.length);
+                matched = true;
+                break;
+            }
+        }
+
+        if (!matched) {
+            // Can't split further — append rest and bail
+            if (result.length > 0) {
+                result[result.length - 1] += remaining;
+            } else {
+                return word;
+            }
+            break;
+        }
+    }
+
+    return result.length > 1 ? result.join(" ") : word;
 }
 
 
@@ -260,15 +523,38 @@ function levenshtein(a, b) {
     return matrix[b.length][a.length];
 }
 
+// ========================================
+// SIMILARITY (0 → 1)
+// ========================================
+
+function similarity(a, b) {
+    if (!a || !b) return 0;
+    if (a === b) return 1;
+
+    const maxLen = Math.max(a.length, b.length);
+    if (maxLen === 0) return 1;
+
+    const dist = levenshtein(a, b);
+    return 1 - (dist / maxLen);
+}
+
 
 function fuzzyMatch(word, keyword) {
     if (word === keyword) return true;
+    if (!word || !keyword) return false;
+
+    // Don't fuzzy-match very short words
     if (word.length < 3 || keyword.length < 3) return false;
 
-    const distance = levenshtein(word, keyword);
+    // Adaptive threshold: longer words allow more errors
     const maxLen = Math.max(word.length, keyword.length);
+    let threshold = 0.3;
 
-    return distance / maxLen <= 0.3;
+    if (maxLen >= 10) threshold = 0.35;  // longer words → more tolerance
+    if (maxLen <= 5)  threshold = 0.25;  // shorter words → less tolerance
+
+    const sim = similarity(word, keyword);
+    return (1 - sim) <= threshold;
 }
 
 
@@ -300,7 +586,7 @@ const STOP_WORDS = new Set([
 
 
 // ========================================
-// RANDOM PICK (avoid repeats)
+// RANDOM PICK
 // ========================================
 
 function pickRandom(intentName, options, lastReplies) {
@@ -344,10 +630,148 @@ function tryMath(question) {
 
 
 // ========================================
+// SUGGESTIONS PER INTENT
+// ========================================
+
+const SUGGESTIONS = {
+    greeting:     ["What are his skills?", "Tell me about his companies", "How to contact him?"],
+    howareyou:    ["What can you do?", "Who is Wassim?", "Show his companies"],
+    who:          ["His birthday?", "His location?", "His education?"],
+    skills:       ["Show programming skills", "His certifications?", "His experience?"],
+    programming:  ["Other skills?", "His projects?", "Contact him"],
+    companies:    ["Tell me about Warstom", "What is Weyra AI?", "Tell me about Solarax"],
+    warstom:      ["More Warstom details", "Tell me about Weyra AI", "Other companies?"],
+    weyra:        ["More Weyra details", "Tell me about Warstom", "Other companies?"],
+    solarax:      ["More Solarax details", "Tell me about Warstom", "Other companies?"],
+    "4event":     ["More 4-Event details", "Tell me about Warstom", "Other companies?"],
+    company_detail: ["Other companies?", "How to contact him?", "His skills?"],
+    contact:      ["Show his Instagram", "His WhatsApp?", "His GitHub?"],
+    email:        ["His WhatsApp?", "His Instagram?", "How to contact him?"],
+    whatsapp:     ["His email?", "His Instagram?", "Contact him"],
+    instagram:    ["His GitHub?", "His LinkedIn?", "Contact him"],
+    github:       ["His LinkedIn?", "His projects?", "Contact him"],
+    linkedin:     ["His GitHub?", "His experience?", "Contact him"],
+    projects:     ["His companies?", "His skills?", "Contact him"],
+    education:    ["His experience?", "His certifications?", "His skills?"],
+    experience:   ["His education?", "His certifications?", "Contact him"],
+    birthday:     ["His location?", "His education?", "His companies?"],
+    location:     ["His birthday?", "His education?", "Contact him"],
+    languages:    ["His skills?", "His education?", "Contact him"],
+    interests:    ["His skills?", "His companies?", "Contact him"],
+    certifications: ["His education?", "His experience?", "Contact him"],
+    fields:       ["His skills?", "His companies?", "Contact him"],
+    job:          ["His companies?", "His skills?", "Contact him"],
+    help:         ["What are his skills?", "Tell me about Warstom", "Contact him"],
+    default:      ["What are his skills?", "Tell me about his companies", "How to contact him?"]
+};
+
+function getSuggestions(intentName) {
+    return SUGGESTIONS[intentName] || SUGGESTIONS.default;
+}
+
+function renderSuggestions(intentName) {
+    const suggestions = getSuggestions(intentName);
+    if (!suggestions || suggestions.length === 0) return "";
+
+    const buttons = suggestions.map(s =>
+        `<button class="ai-suggest-btn" onclick="window.sendSuggestion('${s.replace(/'/g, "\\'")}')">${s}</button>`
+    ).join("");
+
+    return `\n\n%%SUGGESTIONS%%<div class="ai-suggestions">${buttons}</div>%%/SUGGESTIONS%%`;
+}
+
+
+// ========================================
+// GET MORE ABOUT TOPIC
+// ========================================
+
+function getMoreAbout(topic) {
+    const u = window.userData || {};
+    const moreInfo = {
+        skills: u.skills?.technical
+            ? `He has ${u.skills.technical.length} technical skills including:\n- ${u.skills.technical.slice(0, 8).join("\n- ")}`
+            : "He has various technical skills in electrical engineering and web development.",
+        companies: u.companies
+            ? `He founded/co-founded ${u.companies.length} companies:\n${u.companies.map((c, i) => `${i + 1}. **${c.name}** — ${c.role}\n   ${c.tagline}`).join("\n")}\n\nAsk about any one by name for details.`
+            : "He has founded multiple companies.",
+        contact: u.email
+            ? `Best ways to reach him:\n- Email: ${u.email}\n- WhatsApp: ${u.whatsapp_personal || ""}`
+            : "You can reach him via email, WhatsApp, or social media.",
+        who: u.about
+            ? `${u.name} - ${u.title}\n\n${u.about}`
+            : "He's the person behind this page.",
+        projects: u.projects
+            ? `His projects:\n- ${u.projects.join("\n- ")}`
+            : "He works on various projects.",
+        experience: u.experience
+            ? u.experience.map(e => `- ${e.role} - ${e.field}`).join("\n")
+            : "He has professional experience in his field.",
+        education: u.education
+            ? u.education.map(e => `- ${e.diploma} (${e.year})`).join("\n")
+            : "He has a technical diploma."
+    };
+
+    return moreInfo[topic] || "What specifically would you like to know?";
+}
+
+
+// ========================================
 // INTENTS
 // ========================================
 
 const INTENTS = [
+
+    // ----------------------------------------
+    // COMPANY DETAILS (via "more warstom" etc.)
+    // ----------------------------------------
+    {
+        name: "company_detail",
+        keywords: [
+            "more warstom", "more weyra", "more 4event", "more 4-event", "more solarax",
+            "details warstom", "details weyra", "details 4event", "details 4-event", "details solarax",
+            "full warstom", "full weyra", "full 4event", "full 4-event", "full solarax",
+            "warstom details", "weyra details", "4event details", "solarax details"
+        ],
+        replies: [
+            () => {
+                const q = (window._lastQuestion || "").toLowerCase();
+                let companyName = null;
+
+                if (q.includes("warstom")) companyName = "Warstom";
+                else if (q.includes("weyra")) companyName = "Weyra AI";
+                else if (q.includes("4-event") || q.includes("4event") || q.includes("4 event")) companyName = "4-Event";
+                else if (q.includes("solarax")) companyName = "Solarax";
+
+                if (!companyName) {
+                    return "Which company? Try:\n- 'more warstom'\n- 'more weyra'\n- 'more 4event'\n- 'more solarax'";
+                }
+
+                const c = window.userData?.companies?.find(x => x.name === companyName);
+                if (!c) return `${companyName} info not available.`;
+
+                return `**${c.name} — Full Details**\n\n**Role:** ${c.role}\n**Website:** [${c.website}](https://${c.website})\n**Status:** ${c.status}\n**Expected launch:** ${c.expected_launch}\n**Category:** ${c.category}\n\n**Tagline:** ${c.tagline}\n\n**Description:**\n${c.description}\n\n**All features:**\n- ${c.features.join("\n- ")}\n\n**Mission:**\n${c.mission}`;
+            }
+        ]
+    },
+
+    // ----------------------------------------
+    // "MORE" — continue previous topic
+    // ----------------------------------------
+    {
+        name: "more",
+        keywords: [
+            "more", "tell me more", "continue", "next",
+            "go on", "keep going", "and", "also", "details"
+        ],
+        replies: [
+            () => {
+                if (window.lastTopic && window.lastTopic !== "more" && window.lastTopic !== "fallback" && window.lastTopic !== "company_detail") {
+                    return getMoreAbout(window.lastTopic);
+                }
+                return "More about what? Try asking about his skills, companies, or contact info.";
+            }
+        ]
+    },
 
     {
         name: "howareyou",
@@ -381,10 +805,7 @@ const INTENTS = [
 
     {
         name: "thanks",
-        keywords: [
-            "thanks", "thank", "thank you", "thx", "ty",
-            "appreciate"
-        ],
+        keywords: ["thanks", "thank", "thank you", "thx", "ty", "appreciate"],
         replies: [
             () => "You're welcome! Happy to help. Anything else?",
             () => "Glad I could help! Ask me anything else.",
@@ -395,10 +816,7 @@ const INTENTS = [
 
     {
         name: "goodbye",
-        keywords: [
-            "bye", "goodbye", "see you", "cya", "later",
-            "good night", "farewell"
-        ],
+        keywords: ["bye", "goodbye", "see you", "cya", "later", "good night", "farewell"],
         replies: [
             () => "Goodbye! Come back anytime.",
             () => "See you later! Take care.",
@@ -505,9 +923,9 @@ const INTENTS = [
             "send email", "his email", "email address"
         ],
         replies: [
-            () => `${userData?.email || ""}`,
-            () => `His email: ${userData?.email || ""}`,
-            () => `[Send him an email](mailto:${userData?.email || ""})`
+            () => `${window.userData?.email || ""}`,
+            () => `His email: ${window.userData?.email || ""}`,
+            () => `[Send him an email](mailto:${window.userData?.email || ""})`
         ]
     },
 
@@ -518,8 +936,8 @@ const INTENTS = [
             "whatsapp number", "whatsapp business"
         ],
         replies: [
-            () => `Personal: ${userData?.whatsapp_personal || ""}\nBusiness: ${userData?.whatsapp_business || ""}`,
-            () => `WhatsApp Personal: ${userData?.whatsapp_personal || ""}\nWhatsApp Business: ${userData?.whatsapp_business || ""}`,
+            () => `Personal: ${window.userData?.whatsapp_personal || ""}\nBusiness: ${window.userData?.whatsapp_business || ""}`,
+            () => `WhatsApp Personal: ${window.userData?.whatsapp_personal || ""}\nWhatsApp Business: ${window.userData?.whatsapp_business || ""}`,
             () => `[Personal WhatsApp](https://wa.me/212679484103)  \n[Business WhatsApp](https://wa.me/212664158149)`
         ]
     },
@@ -532,8 +950,8 @@ const INTENTS = [
             "his number", "his phone"
         ],
         replies: [
-            () => `Personal: ${userData?.whatsapp_personal || ""}\nBusiness: ${userData?.whatsapp_business || ""}`,
-            () => `His phone numbers:\n- Personal: ${userData?.whatsapp_personal || ""}\n- Business: ${userData?.whatsapp_business || ""}`
+            () => `Personal: ${window.userData?.whatsapp_personal || ""}\nBusiness: ${window.userData?.whatsapp_business || ""}`,
+            () => `His phone numbers:\n- Personal: ${window.userData?.whatsapp_personal || ""}\n- Business: ${window.userData?.whatsapp_business || ""}`
         ]
     },
 
@@ -541,9 +959,9 @@ const INTENTS = [
         name: "instagram",
         keywords: ["instagram", "insta", "ig"],
         replies: [
-            () => `[Instagram](${userData?.social?.instagram || ""})`,
-            () => `His Instagram: ${userData?.social?.instagram || ""}`,
-            () => `[Follow him on Instagram](${userData?.social?.instagram || ""})`
+            () => `[Instagram](${window.userData?.social?.instagram || ""})`,
+            () => `His Instagram: ${window.userData?.social?.instagram || ""}`,
+            () => `[Follow him on Instagram](${window.userData?.social?.instagram || ""})`
         ]
     },
 
@@ -551,9 +969,9 @@ const INTENTS = [
         name: "facebook",
         keywords: ["facebook", "fb"],
         replies: [
-            () => `[Facebook](${userData?.social?.facebook || ""})`,
-            () => `His Facebook: ${userData?.social?.facebook || ""}`,
-            () => `[Visit his Facebook](${userData?.social?.facebook || ""})`
+            () => `[Facebook](${window.userData?.social?.facebook || ""})`,
+            () => `His Facebook: ${window.userData?.social?.facebook || ""}`,
+            () => `[Visit his Facebook](${window.userData?.social?.facebook || ""})`
         ]
     },
 
@@ -561,9 +979,9 @@ const INTENTS = [
         name: "linkedin",
         keywords: ["linkedin", "linked in", "ln"],
         replies: [
-            () => `[LinkedIn](${userData?.social?.linkedin || ""})`,
-            () => `His LinkedIn: ${userData?.social?.linkedin || ""}`,
-            () => `[Connect with him on LinkedIn](${userData?.social?.linkedin || ""})`
+            () => `[LinkedIn](${window.userData?.social?.linkedin || ""})`,
+            () => `His LinkedIn: ${window.userData?.social?.linkedin || ""}`,
+            () => `[Connect with him on LinkedIn](${window.userData?.social?.linkedin || ""})`
         ]
     },
 
@@ -571,9 +989,9 @@ const INTENTS = [
         name: "github",
         keywords: ["github", "git hub", "git"],
         replies: [
-            () => `[GitHub](${userData?.social?.github || ""})`,
-            () => `His GitHub: ${userData?.social?.github || ""}`,
-            () => `[Check his GitHub](${userData?.social?.github || ""})`
+            () => `[GitHub](${window.userData?.social?.github || ""})`,
+            () => `His GitHub: ${window.userData?.social?.github || ""}`,
+            () => `[Check his GitHub](${window.userData?.social?.github || ""})`
         ]
     },
 
@@ -587,9 +1005,9 @@ const INTENTS = [
             "how to contact", "how can i contact"
         ],
         replies: [
-            () => `You can reach him here:\n\n[Email](mailto:${userData?.email || ""})\n[WhatsApp Personal](https://wa.me/212679484103)\n[WhatsApp Business](https://wa.me/212664158149)`,
-            () => `Contact options:\n\nEmail: ${userData?.email || ""}\n[Personal WhatsApp](https://wa.me/212679484103)\n[Business WhatsApp](https://wa.me/212664158149)`,
-            () => `Ways to contact him:\n\n[Send Email](mailto:${userData?.email || ""})\n[WhatsApp](https://wa.me/212664158149)`
+            () => `You can reach him here:\n\n[Email](mailto:${window.userData?.email || ""})\n[WhatsApp Personal](https://wa.me/212679484103)\n[WhatsApp Business](https://wa.me/212664158149)`,
+            () => `Contact options:\n\nEmail: ${window.userData?.email || ""}\n[Personal WhatsApp](https://wa.me/212679484103)\n[Business WhatsApp](https://wa.me/212664158149)`,
+            () => `Ways to contact him:\n\n[Send Email](mailto:${window.userData?.email || ""})\n[WhatsApp](https://wa.me/212664158149)`
         ]
     },
 
@@ -602,9 +1020,9 @@ const INTENTS = [
             "tell me about", "info", "information"
         ],
         replies: [
-            () => `${userData?.name || ""}\n${userData?.title || ""}\nLocation: ${userData?.location || ""}\n\n${userData?.about || ""}`,
-            () => `${userData?.name || ""} is a ${userData?.title || ""} from ${userData?.location || ""}.\n\n${userData?.about || ""}`,
-            () => `Let me introduce him:\n\nName: ${userData?.name || ""}\nTitle: ${userData?.title || ""}\nLocation: ${userData?.location || ""}\n\n${userData?.about || ""}`
+            () => `${window.userData?.name || ""}\n${window.userData?.title || ""}\nLocation: ${window.userData?.location || ""}\n\n${window.userData?.about || ""}`,
+            () => `${window.userData?.name || ""} is a ${window.userData?.title || ""} from ${window.userData?.location || ""}.\n\n${window.userData?.about || ""}`,
+            () => `Let me introduce him:\n\nName: ${window.userData?.name || ""}\nTitle: ${window.userData?.title || ""}\nLocation: ${window.userData?.location || ""}\n\n${window.userData?.about || ""}`
         ]
     },
 
@@ -617,18 +1035,18 @@ const INTENTS = [
         ],
         replies: [
             () => {
-                if (!userData?.skills?.technical) return "Skills not loaded yet.";
-                const tech = userData.skills.technical.slice(0, 6).map(s => `- ${s}`).join("\n");
+                if (!window.userData?.skills?.technical) return "Skills not loaded yet.";
+                const tech = window.userData.skills.technical.slice(0, 6).map(s => `- ${s}`).join("\n");
                 return `Top technical skills:\n${tech}\n\nAsk "programming" for languages.`;
             },
             () => {
-                if (!userData?.skills?.technical) return "Skills not loaded yet.";
-                const tech = userData.skills.technical.slice(6, 12).map(s => `- ${s}`).join("\n");
+                if (!window.userData?.skills?.technical) return "Skills not loaded yet.";
+                const tech = window.userData.skills.technical.slice(6, 12).map(s => `- ${s}`).join("\n");
                 return `More technical skills:\n${tech}`;
             },
             () => {
-                if (!userData?.skills?.technical) return "Skills not loaded yet.";
-                return `He has ${userData.skills.technical.length} technical skills total:\n- ${userData.skills.technical.slice(0, 5).join("\n- ")}`;
+                if (!window.userData?.skills?.technical) return "Skills not loaded yet.";
+                return `He has ${window.userData.skills.technical.length} technical skills total:\n- ${window.userData.skills.technical.slice(0, 5).join("\n- ")}`;
             }
         ]
     },
@@ -641,8 +1059,8 @@ const INTENTS = [
             "javascript", "php", "software", "web dev"
         ],
         replies: [
-            () => `Programming languages & tools:\n- ${(userData?.skills?.programming || []).join("\n- ")}`,
-            () => `Tech stack:\n${(userData?.skills?.programming || []).map(s => `- ${s}`).join("\n")}`
+            () => `Programming languages & tools:\n- ${(window.userData?.skills?.programming || []).join("\n- ")}`,
+            () => `Tech stack:\n${(window.userData?.skills?.programming || []).map(s => `- ${s}`).join("\n")}`
         ]
     },
 
@@ -653,19 +1071,16 @@ const INTENTS = [
             "teamwork", "team work", "graphic", "svg"
         ],
         replies: [
-            () => `Other skills:\n- ${(userData?.skills?.other || []).join("\n- ")}`
+            () => `Other skills:\n- ${(window.userData?.skills?.other || []).join("\n- ")}`
         ]
     },
 
     {
         name: "fields",
-        keywords: [
-            "field", "domain", "profession",
-            "specialty", "metier", "industry"
-        ],
+        keywords: ["field", "domain", "profession", "specialty", "metier", "industry"],
         replies: [
-            () => `Fields: ${(userData?.fields || []).join(" | ")}`,
-            () => `He works in:\n- ${(userData?.fields || []).join("\n- ")}`
+            () => `Fields: ${(window.userData?.fields || []).join(" | ")}`,
+            () => `He works in:\n- ${(window.userData?.fields || []).join("\n- ")}`
         ]
     },
 
@@ -673,7 +1088,7 @@ const INTENTS = [
         name: "job",
         keywords: ["job", "work", "career", "what does he do"],
         replies: [
-            () => `He's a ${userData?.title || ""}.\n\nFields: ${(userData?.fields || []).join(" | ")}`
+            () => `He's a ${window.userData?.title || ""}.\n\nFields: ${(window.userData?.fields || []).join(" | ")}`
         ]
     },
 
@@ -686,8 +1101,8 @@ const INTENTS = [
         ],
         replies: [
             () => {
-                if (!userData?.education) return "Education not loaded.";
-                const edu = userData.education.map(e =>
+                if (!window.userData?.education) return "Education not loaded.";
+                const edu = window.userData.education.map(e =>
                     `- ${e.diploma}${e.option ? " (" + e.option + ")" : ""}${e.school ? " - " + e.school : ""} - ${e.year}`
                 ).join("\n");
                 return `Education:\n${edu}`;
@@ -704,8 +1119,8 @@ const INTENTS = [
         ],
         replies: [
             () => {
-                if (!userData?.experience) return "Experience not loaded.";
-                const exp = userData.experience.map(e =>
+                if (!window.userData?.experience) return "Experience not loaded.";
+                const exp = window.userData.experience.map(e =>
                     `- ${e.role} - ${e.field}${e.note ? " (" + e.note + ")" : ""}`
                 ).join("\n");
                 return `Experience:\n${exp}`;
@@ -720,7 +1135,7 @@ const INTENTS = [
             "certif", "award", "achievement", "diplome", "certified"
         ],
         replies: [
-            () => `Certifications:\n- ${(userData?.certifications || []).join("\n- ")}`
+            () => `Certifications:\n- ${(window.userData?.certifications || []).join("\n- ")}`
         ]
     },
 
@@ -733,8 +1148,8 @@ const INTENTS = [
         ],
         replies: [
             () => {
-                if (!userData?.languages) return "Languages not loaded.";
-                const langs = userData.languages.map(l => `- ${l.language}: ${l.level}`).join("\n");
+                if (!window.userData?.languages) return "Languages not loaded.";
+                const langs = window.userData.languages.map(l => `- ${l.language}: ${l.level}`).join("\n");
                 return `Languages:\n${langs}`;
             }
         ]
@@ -742,16 +1157,16 @@ const INTENTS = [
 
     {
         name: "projects",
-        keywords: [
-            "project", "projects", "portfolio", "projet",
-            "built", "created", "made", "work sample"
-        ],
+        keywords: ["project", "projects", "portfolio", "projet", "built", "created", "made", "work sample"],
         replies: [
-            () => `Projects:\n- ${(userData?.projects || []).join("\n- ")}`,
-            () => `Some of his projects:\n${(userData?.projects || []).map(p => `- ${p}`).join("\n")}`
+            () => `Projects:\n- ${(window.userData?.projects || []).join("\n- ")}`,
+            () => `Some of his projects:\n${(window.userData?.projects || []).map(p => `- ${p}`).join("\n")}`
         ]
     },
 
+    // ----------------------------------------
+    // COMPANIES (list)
+    // ----------------------------------------
     {
         name: "companies",
         keywords: [
@@ -763,60 +1178,92 @@ const INTENTS = [
         ],
         replies: [
             () => {
-                if (!userData?.companies) return "Companies not loaded.";
-                const list = userData.companies.map(c => {
-                    return `**${c.name}** - ${c.role}\n[${c.website}](https://${c.website})\nStatus: ${c.status} (${c.expected_launch})`;
+                if (!window.userData?.companies) return "Companies not loaded.";
+                const list = window.userData.companies.map((c, i) => {
+                    return `${i + 1}. **${c.name}** — ${c.role}\n   ${c.tagline}\n   [${c.website}](https://${c.website}) · ${c.status} (${c.expected_launch})`;
                 }).join("\n\n");
-                return `Companies & ventures:\n\n${list}`;
+                return `Wassim's companies & ventures:\n\n${list}\n\nAsk about any one by name (e.g., "tell me about Warstom") or by number (1-4).`;
             },
             () => {
-                if (!userData?.companies) return "Companies not loaded.";
-                return `He founded/co-founded:\n\n${userData.companies.map(c => `- **${c.name}** - ${c.role} [Visit](https://${c.website})`).join("\n")}`;
+                if (!window.userData?.companies) return "Companies not loaded.";
+                const list = window.userData.companies.map((c, i) =>
+                    `${i + 1}. **${c.name}** — ${c.role}\n   ${c.short_description}`
+                ).join("\n\n");
+                return `He founded/co-founded ${window.userData.companies.length} companies:\n\n${list}\n\nSay "1", "2", "3", or "4" for full details.`;
+            }
+        ]
+    },
+
+    // ----------------------------------------
+    // WARSTOM
+    // ----------------------------------------
+    {
+        name: "warstom",
+        keywords: ["warstom", "warstom.com"],
+        replies: [
+            () => {
+                const c = window.userData?.companies?.find(x => x.name === "Warstom");
+                if (!c) return "Warstom info not available.";
+
+                return `**${c.name}** — ${c.role}\n[${c.website}](https://${c.website})\nStatus: ${c.status}\nExpected launch: ${c.expected_launch}\nCategory: ${c.category}\n\n**${c.tagline}**\n\n${c.description}\n\n**Key features:**\n- ${c.features.slice(0, 6).join("\n- ")}\n\nAsk "more warstom" for the full list.`;
+            }
+        ]
+    },
+
+    // ----------------------------------------
+    // WEYRA AI
+    // ----------------------------------------
+    {
+        name: "weyra",
+        keywords: ["weyra.ai", "weyra ai"],
+        replies: [
+            () => {
+                const c = window.userData?.companies?.find(x => x.name === "Weyra AI");
+                if (!c) return "Weyra AI info not available.";
+
+                return `**${c.name}** — ${c.role}\n[${c.website}](https://${c.website})\nStatus: ${c.status}\nExpected launch: ${c.expected_launch}\nCategory: ${c.category}\n\n**${c.tagline}**\n\n${c.description}\n\n**Key features:**\n- ${c.features.slice(0, 6).join("\n- ")}\n\nAsk "more weyra" for the full list.`;
+            }
+        ]
+    },
+
+    // ----------------------------------------
+    // 4-EVENT
+    // ----------------------------------------
+    {
+        name: "4event",
+        keywords: ["4-event", "4event", "4 event", "4-event.fun"],
+        replies: [
+            () => {
+                const c = window.userData?.companies?.find(x => x.name === "4-Event");
+                if (!c) return "4-Event info not available.";
+
+                return `**${c.name}** — ${c.role}\n[${c.website}](https://${c.website})\nStatus: ${c.status}\nExpected launch: ${c.expected_launch}\nCategory: ${c.category}\n\n**${c.tagline}**\n\n${c.description}\n\n**Key features:**\n- ${c.features.slice(0, 6).join("\n- ")}\n\nAsk "more 4event" for the full list.`;
+            }
+        ]
+    },
+
+    // ----------------------------------------
+    // SOLARAX
+    // ----------------------------------------
+    {
+        name: "solarax",
+        keywords: ["solarax", "solarax.ma"],
+        replies: [
+            () => {
+                const c = window.userData?.companies?.find(x => x.name === "Solarax");
+                if (!c) return "Solarax info not available.";
+
+                return `**${c.name}** — ${c.role}\n[${c.website}](https://${c.website})\nStatus: ${c.status}\nExpected launch: ${c.expected_launch}\nCategory: ${c.category}\n\n**${c.tagline}**\n\n${c.description}\n\n**Key features:**\n- ${c.features.slice(0, 6).join("\n- ")}\n\nAsk "more solarax" for the full list.`;
             }
         ]
     },
 
     {
-        name: "warstom",
-        keywords: ["warstom", "warstom.com"],
-        replies: [
-            () => `**Warstom** - Founder & CEO\n[warstom.com](https://warstom.com)\nStatus: Under Development - Coming Soon\nExpected launch: 03-2027\n\nA tech company focused on innovative digital platforms and AI solutions.`
-        ]
-    },
-
-    {
-        name: "weyra",
-        keywords: ["weyra.ai", "weyra ai"],
-        replies: [
-            () => `**Weyra AI** - Founder\n[weyra.ai](https://weyra.ai)\nStatus: Under Development - Coming Soon\nExpected launch: 03-2027\n\nAn AI assistant platform, built in partnership with Warstom.\n\nBy the way, I'm a **mini version of Weyra AI (v3.03.01)** - powered by the same vision!`
-        ]
-    },
-
-    {
-        name: "4event",
-        keywords: ["4-event", "4event", "4 event", "4-event.fun"],
-        replies: [
-            () => `**4-Event** - Co-Founder\n[4-event.fun](https://4-event.fun)\nStatus: Coming Soon\nExpected launch: 11-2026\n\nAn event platform for discovering, creating and sharing events.`
-        ]
-    },
-
-    {
-        name: "solarax",
-        keywords: ["solarax", "solarax.ma"],
-        replies: [
-            () => `**Solarax** - Founder\n[solarax.ma](https://solarax.ma)\nStatus: Planned\nExpected launch: 2028\n\nA renewable energy company focused on solar solutions in Morocco.`
-        ]
-    },
-
-    {
         name: "interests",
-        keywords: [
-            "interest", "hobby", "hobbies", "passion",
-            "likes", "enjoys", "free time", "loisir", "loves"
-        ],
+        keywords: ["interest", "hobby", "hobbies", "passion", "likes", "enjoys", "free time", "loisir", "loves"],
         replies: [
-            () => `Interests: ${(userData?.interests || []).join(", ")}`,
-            () => `He's passionate about:\n- ${(userData?.interests || []).join("\n- ")}`
+            () => `Interests: ${(window.userData?.interests || []).join(", ")}`,
+            () => `He's passionate about:\n- ${(window.userData?.interests || []).join("\n- ")}`
         ]
     },
 
@@ -827,8 +1274,8 @@ const INTENTS = [
             "live", "lives", "based", "from", "stay", "residence"
         ],
         replies: [
-            () => `Based in ${userData?.location || ""}`,
-            () => `He lives in ${userData?.location || ""}`
+            () => `Based in ${window.userData?.location || ""}`,
+            () => `He lives in ${window.userData?.location || ""}`
         ]
     },
 
@@ -841,8 +1288,8 @@ const INTENTS = [
         ],
         replies: [
             () => {
-                if (!userData?.birthday) return "Birthday not loaded.";
-                const date = new Date(userData.birthday);
+                if (!window.userData?.birthday) return "Birthday not loaded.";
+                const date = new Date(window.userData.birthday);
                 const now = new Date();
                 let age = now.getFullYear() - date.getFullYear();
                 const m = now.getMonth() - date.getMonth();
@@ -896,17 +1343,37 @@ function scoreIntent(question, intent) {
     intent.keywords.forEach(keyword => {
         const k = normalize(keyword);
 
+        // Multi-word keyword
         if (k.includes(" ")) {
             if (normalized.includes(k)) {
                 score += 3;
             }
+            // Also: try matching all words present (any order)
+            const kParts = k.split(" ");
+            const allPresent = kParts.every(part =>
+                wordsToCheck.some(w => w === part || fuzzyMatch(w, part))
+            );
+            if (allPresent && kParts.length > 1) {
+                score += 2;
+            }
             return;
         }
 
+        // Single-word keyword
         wordsToCheck.forEach(word => {
             if (word === k) {
                 score += 2;
-            } else if (fuzzyMatch(word, k)) {
+                return;
+            }
+
+            // Check singular/plural variations
+            if (word.replace(/s$/, "") === k.replace(/s$/, "")) {
+                score += 2;
+                return;
+            }
+
+            // Fuzzy match
+            if (fuzzyMatch(word, k)) {
                 score += 1;
             }
         });
@@ -927,20 +1394,31 @@ function getAIResponse(question, userData, lastReplies) {
     if (!userData) {
         return "Still loading my data... try again in a second.";
     }
-    
 
-    // 1. MATH
-    const mathResult = tryMath(question);
+    // 0. FIX TYPOS
+    const fixedQuestion = fixTypos(question);
+
+    // 1. NUMBER SUPPORT (if last response was a list)
+    const trimmed = fixedQuestion.trim();
+    if (/^[1-9]$/.test(trimmed) && window.lastList) {
+        const index = parseInt(trimmed, 10) - 1;
+        if (window.lastList[index]) {
+            return window.lastList[index];
+        }
+    }
+
+    // 2. MATH
+    const mathResult = tryMath(fixedQuestion);
     if (mathResult) {
         return `Result: **${mathResult.result}**`;
     }
 
-    // 2. INTENT SCORING
+    // 3. INTENT SCORING
     let bestIntent = null;
     let bestScore = 0;
 
     INTENTS.forEach(intent => {
-        const score = scoreIntent(question, intent);
+        const score = scoreIntent(fixedQuestion, intent);
         if (score > bestScore) {
             bestScore = score;
             bestIntent = intent;
@@ -950,15 +1428,34 @@ function getAIResponse(question, userData, lastReplies) {
     if (bestIntent && bestScore >= 2) {
         const variants = bestIntent.replies || [bestIntent.reply];
         const chosen = pickRandom(bestIntent.name, variants, lastReplies);
-        return typeof chosen === "function" ? chosen() : chosen;
+        const replyText = typeof chosen === "function" ? chosen() : chosen;
+
+        // Save last topic (context memory)
+        window.lastTopic = bestIntent.name;
+
+        // Save list for number support
+        if (bestIntent.name === "companies" && userData.companies) {
+            window.lastList = userData.companies.map(c =>
+                `**${c.name}** — ${c.role}\n[${c.website}](https://${c.website})\nStatus: ${c.status}\nExpected launch: ${c.expected_launch}\nCategory: ${c.category}\n\n**${c.tagline}**\n\n${c.description}\n\n**All features:**\n- ${c.features.join("\n- ")}\n\n**Mission:**\n${c.mission}`
+            );
+        } else {
+            window.lastList = null;
+        }
+
+        return replyText + renderSuggestions(bestIntent.name);
     }
 
-    // 3. SMART FALLBACK
+    // 4. SMART FALLBACK
+    window.lastTopic = "fallback";
+
     const fallbacks = [
         () => `I'm not sure what you mean. But I can tell you about:\n- Skills\n- Companies (Warstom, Weyra, 4-Event, Solarax)\n- Email & WhatsApp\n- Education & experience\n\nTry rephrasing your question.`,
         () => `Hmm, I didn't quite get that. Here's what I can do:\n- Answer about the owner\n- Give you contact info\n- Explain his companies\n- List his skills\n\nWhat do you want to know?`,
         () => `I'm still learning! I know a lot:\n- Skills, companies, projects\n- Contact (email, WhatsApp, social)\n- Education, experience\n\nAsk me anything.`,
         () => `That's outside my knowledge, but I'm great at answering questions about the person behind this page.\n\nTry:\n- "What are his skills?"\n- "Tell me about Warstom"\n- "Give me his email"`
     ];
-    return pickRandom("fallback", fallbacks, lastReplies)();
+
+    const fallbackText = pickRandom("fallback", fallbacks, lastReplies)();
+
+    return fallbackText + renderSuggestions("default");
 }
