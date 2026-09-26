@@ -1,9 +1,8 @@
 /* ============================================================
    WEYRA AI — Wassim Personal Assistant
-   Version: 2.2.0
+   Version: v1.3.1
    Language: English only
    Data source: me.json
-   Features: Name memory + Combined best of v1.04.02 + v2.0.0
    ============================================================ */
 
 /* ========================================
@@ -2308,6 +2307,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    console.log("%cWeyra AI v2.2.0 loaded", "font-weight:bold;");
+    console.log("%cWeyra AI v1.3.1 loaded", "font-weight:bold;");
 
 })();
