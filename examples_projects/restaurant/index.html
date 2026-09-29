@@ -21,6 +21,12 @@
     <!-- ===== HEADER ===== -->
     <header class="header">
         <div class="header-inner">
+
+            <!-- Navbar Back Button (hidden by default, appears on scroll) -->
+            <button class="nav-back-btn" id="navBackBtn" aria-label="Back">
+                <i class="fa-solid fa-arrow-left"></i>Back
+            </button>
+
             <div class="logo">
                 <i class="fa-solid fa-utensils"></i>
                 <span data-i18n="brand">Le Délice</span>
@@ -30,7 +36,9 @@
                 <!-- Language Switcher -->
                 <div class="lang-switcher" id="langSwitcher">
                     <button class="lang-btn" id="langBtn" aria-label="Change language">
-                        <i class="fa-solid fa-globe"></i>
+                        <span class="lang-flag" id="currentLangFlag">
+                            <img src="https://flagcdn.com/w40/gb.png" alt="English" loading="lazy">
+                        </span>
                         <span id="currentLangLabel">EN</span>
                         <i class="fa-solid fa-chevron-down lang-arrow"></i>
                     </button>
@@ -38,20 +46,20 @@
                     <div class="lang-menu" id="langMenu">
                         <button class="lang-option" data-lang="en">
                             <span class="lang-flag">
-    <img src="https://flagcdn.com/w40/gb.png" alt="English" loading="lazy">
-</span>
+                                <img src="https://flagcdn.com/w40/gb.png" alt="English" loading="lazy">
+                            </span>
                             <span>English</span>
                         </button>
                         <button class="lang-option" data-lang="fr">
                             <span class="lang-flag">
-    <img src="https://flagcdn.com/w40/fr.png" alt="Français" loading="lazy">
-</span>
+                                <img src="https://flagcdn.com/w40/fr.png" alt="Français" loading="lazy">
+                            </span>
                             <span>Français</span>
                         </button>
                         <button class="lang-option" data-lang="es">
                             <span class="lang-flag">
-    <img src="https://flagcdn.com/w40/es.png" alt="Español" loading="lazy">
-</span>
+                                <img src="https://flagcdn.com/w40/es.png" alt="Español" loading="lazy">
+                            </span>
                             <span>Español</span>
                         </button>
                     </div>
