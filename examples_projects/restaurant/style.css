@@ -206,10 +206,12 @@ h1, h2, h3 {
     font-weight: 600;
 }
 
-.lang-flag {
-    font-size: 16px;
+.lang-flag img {
+    width: 50%;
+    height: 50%;
+    object-fit: cover;
+    display: block;
 }
-
 
 /* ========================================
    HERO
