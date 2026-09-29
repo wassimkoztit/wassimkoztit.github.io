@@ -1,10 +1,3 @@
-/* ============================================================
-   WEYRA AI — Wassim Personal Assistant
-   Version: v1.3.1
-   Language: English only
-   Data source: me.json
-   ============================================================ */
-
 /* ========================================
    PAGE LOAD ANIMATION
    ======================================== */
@@ -76,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.clarificationContext = null;
     window.awaitingClarification = false;
 
-    // ===== NEW: User name memory =====
+    // ===== User name memory =====
     window.visitorName = null;
     window.visitorNameAsked = false;
 
@@ -517,10 +510,6 @@ document.addEventListener("DOMContentLoaded", () => {
        USER NAME CAPTURE
        ============================================================ */
 
-    // Patterns that indicate the user is telling their name:
-    //   "I'm Mohammed" / "im mohammed" / "my name is Mohammed"
-    //   "call me Mohammed" / "you can call me Mohammed"
-    //   "name's Mohammed" / "this is Mohammed"
     const NAME_PATTERNS = [
         /^(?:hi|hello|hey)[,!\s]+(?:i am|i'm|im|my name is|name'?s|call me|this is)\s+([a-z][a-z'-]{1,20})$/i,
         /^(?:i am|i'm|im)\s+([a-z][a-z'-]{1,20})$/i,
@@ -531,7 +520,6 @@ document.addEventListener("DOMContentLoaded", () => {
         /^(?:i am|i'm|im)\s+called\s+([a-z][a-z'-]{1,20})$/i
     ];
 
-    // Words that should NOT be captured as names
     const RESERVED_NAMES = new Set([
         "wassim", "weyra", "warstom", "solarax", "cfmmer", "sgtm",
         "here", "back", "sorry", "fine", "good", "ok", "okay",
@@ -581,13 +569,13 @@ document.addEventListener("DOMContentLoaded", () => {
     function isAskingName(text) {
         const normalized = correctWords(text);
         return /\b(what(?:'s| is) your name|who are you|your name)\b/i.test(normalized)
-            && !/\b(what(?:'s| is) (his|wassim's|the) name)\b/i.test(normalized);
+            && !/\b(what(?:'s| is) (his|Wassim|the) name)\b/i.test(normalized);
     }
 
     function responseAskingName() {
         return pickRandom("asking_name", [
             () => `I'm **Weyra AI v1.3.1** — a mini assistant created by Wassim.\n\nAnd you? What's your name? 😊`,
-            () => `I'm **Weyra AI** — Wassim's personal AI assistant.\n\nMay I ask your name?`,
+            () => `I'm **Weyra AI** — Wassim personal AI assistant.\n\nMay I ask your name?`,
             () => `I'm Weyra AI, version v1.3.1. What should I call you?`
         ])();
     }
@@ -599,12 +587,6 @@ document.addEventListener("DOMContentLoaded", () => {
             () => `Welcome, **${name}**!\n\nHow can I help you learn more about Wassim?`,
             () => `Hello **${name}**! 👋\n\nWhat would you like to know?`
         ])();
-    }
-
-    function withName(text) {
-        // Optional helper: inject name into a response if we know it
-        if (!window.visitorName) return text;
-        return text; // Currently not used, kept for future use
     }
 
 
@@ -827,10 +809,6 @@ document.addEventListener("DOMContentLoaded", () => {
        CONTEXT RESOLUTION
        ============================================================ */
 
-    function getRecentMessages() {
-        return window.conversationHistory.slice(-6);
-    }
-
     function getPreviousEntity() {
         for (let i = window.conversationHistory.length - 1; i >= 0; i--) {
             const message = window.conversationHistory[i].content;
@@ -1018,7 +996,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ============================================================
-       URL NORMALIZER (fixes missing protocol)
+       URL NORMALIZER
        ============================================================ */
 
     function normalizeURL(url) {
@@ -1043,7 +1021,6 @@ document.addEventListener("DOMContentLoaded", () => {
        ============================================================ */
 
     function responseGreeting() {
-        // If we know the visitor's name, greet them personally
         if (window.visitorName) {
             return pickRandom("greeting_personal", [
                 () => `Hello **${window.visitorName}**! 👋\n\nWhat would you like to know about Wassim?`,
@@ -1078,7 +1055,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const education = getEducation();
 
         if (!education.length) {
-            return "Wassim's education information is not currently available.";
+            return "Wassim education information is not currently available.";
         }
 
         const lines = education.map(item => {
@@ -1144,8 +1121,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         return sections.length
-            ? `Wassim's skills:\n\n${sections.join("\n\n")}`
-            : "Wassim's skills are not currently available.";
+            ? `Wassim skills:\n\n${sections.join("\n\n")}`
+            : "Wassim skills are not currently available.";
     }
 
 
@@ -1191,7 +1168,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const experiences = window.userData?.experience || [];
 
         if (!experiences.length) {
-            return "Wassim's work experience is not currently available.";
+            return "Wassim work experience is not currently available.";
         }
 
         return experiences.map(exp => {
@@ -1221,7 +1198,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return languages.length
             ? `Languages:\n${languages.map(item => `- ${item.language}: ${item.level}`).join("\n")}`
-            : "Wassim's language information is not currently available.";
+            : "Wassim language information is not currently available.";
     }
 
 
@@ -1278,7 +1255,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return `${index + 1}. **${company.name}** — ${company.role}\n   ${company.tagline}${relationship}`;
         }).join("\n\n");
 
-        return `Wassim's companies & ventures:\n\n${list}\n\nAsk about any one by name (e.g., "tell me about Warstom") or by number (1-4).`;
+        return `Wassim companies & ventures:\n\n${list}\n\nAsk about any one by name (e.g., "tell me about Warstom") or by number (1-4).`;
     }
 
 
@@ -1286,7 +1263,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const company = getCompanyByEntity(entity);
 
         if (!company) {
-            return "I couldn't find that company in Wassim's data.";
+            return "I couldn't find that company in Wassim data.";
         }
 
         const logoKey = entity;
@@ -1332,7 +1309,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return interests.length
             ? `Interests:\n- ${interests.join("\n- ")}`
-            : "Wassim's interests are not currently listed.";
+            : "Wassim interests are not currently listed.";
     }
 
 
@@ -1351,8 +1328,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         return sections.length
-            ? `Wassim's goals:\n\n${sections.join("\n\n")}`
-            : "Wassim's goals are not currently listed.";
+            ? `Wassim goals:\n\n${sections.join("\n\n")}`
+            : "Wassim goals are not currently listed.";
     }
 
 
@@ -1360,7 +1337,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const profile = window.userData?.professional_profile;
 
         if (profile?.current_role) {
-            return `Wassim's current professional role is **${profile.current_role}**.`;
+            return `Wassim current professional role is **${profile.current_role}**.`;
         }
 
         return `He's a ${window.userData?.title || ""}.\n\nFields: ${(window.userData?.fields || []).join(" | ")}`;
@@ -1371,7 +1348,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const birthday = window.userData?.birthday;
 
         if (!birthday) {
-            return "Wassim's birthday is not currently listed.";
+            return "Wassim birthday is not currently listed.";
         }
 
         const date = new Date(birthday);
@@ -1394,7 +1371,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const location = window.userData?.location;
 
         if (!location) {
-            return "Wassim's location is not currently listed.";
+            return "Wassim location is not currently listed.";
         }
 
         return `Based in ${formatLocation(location)}`;
@@ -1521,7 +1498,7 @@ document.addEventListener("DOMContentLoaded", () => {
             case "languages": return responseLanguages();
             case "certifications": return responseCertifications();
             default:
-                return "You can ask me for more information about Wassim's education, skills, experience, projects, companies, services, interests or goals.";
+                return "You can ask me for more information about Wassim education, skills, experience, projects, companies, services, interests or goals.";
         }
     }
 
@@ -1592,13 +1569,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    /**
+     * Generic search in the JSON data.
+     * v1.3.1 — Much stricter:
+     *   - Requires at least 2 meaningful query words
+     *   - Requires the entry to match ALL query words
+     *   - Requires at least 2 matched words
+     *   - Skips entries whose path ends in a numeric index (e.g. array items)
+     *     because those produce raw noise like "skills.programming_and_software.0: HTML"
+     */
     function genericSearch(text) {
         if (!window.userData) return null;
 
         const normalized = correctWords(text);
         const queryWords = normalized.split(" ").filter(word => word.length >= 3);
 
-        if (!queryWords.length) return null;
+        // Need at least 2 meaningful words to attempt a generic search
+        if (queryWords.length < 2) return null;
 
         const entries = flattenObject(window.userData);
 
@@ -1613,13 +1600,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (haystack.includes(word)) score += 1;
             }
 
-            if (score > bestScore) {
+            // Only accept entries that match ALL query words
+            if (score === queryWords.length && score > bestScore) {
                 bestScore = score;
                 best = entry;
             }
         }
 
-        if (!best || bestScore === 0) return null;
+        // Require at least 2 matched words to avoid noise
+        if (!best || bestScore < 2) return null;
+
+        // Skip entries whose path ends in a numeric index (array element noise)
+        const pathParts = best.path.split(".");
+        const lastPart = pathParts[pathParts.length - 1];
+        if (/^\d+$/.test(lastPart)) {
+            return null;
+        }
+
         return best;
     }
 
@@ -1639,7 +1636,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const searchResult = genericSearch(text);
 
         if (searchResult) {
-            return `I found this information in Wassim's profile:\n\n**${searchResult.path}**: ${searchResult.value}`;
+            // Clean the path so we don't show raw JSON keys like "skills.programming_and_software.0"
+            const cleanPath = searchResult.path
+                .split(".")
+                .filter(part => !/^\d+$/.test(part))     // remove numeric indexes
+                .join(" ")
+                .replace(/_/g, " ")
+                .replace(/\b\w/g, c => c.toUpperCase());
+
+            return `Here's what I found in Wassim profile:\n\n**${cleanPath}**: ${searchResult.value}`;
         }
 
         const words = normalize(text)
@@ -1677,7 +1682,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (partialMatch) {
-            fallbackText += `\n\nDid you mean something about **${partialMatch}**? Try asking more specifically.`;
+            fallbackText += `\n\nDid you mean something about **${partialMatch.replace(/_/g, " ")}**? Try asking more specifically.`;
         }
 
         return fallbackText;
@@ -1935,7 +1940,17 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // 18. Smart ambiguity handler
+        // 18. Explicit programming catch — prevents falling into genericSearch noise
+        if (/\b(programming|languages?|coding|software|tech stack|tech skills)\b/i.test(fixedQuestion)) {
+            // Only treat as programming if it's not clearly about human languages
+            if (!/\b(english|french|arabic|spanish|darija)\b/i.test(fixedQuestion)) {
+                window.lastTopic = "programming";
+                window.lastIntentName = "programming";
+                return responseProgramming();
+            }
+        }
+
+        // 19. Smart ambiguity handler
         const topicScores = {};
         for (const [t, keywords] of Object.entries(TOPICS)) {
             let score = 0;
@@ -1958,7 +1973,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return `${intro}I want to make sure I understand you correctly. Are you asking about:\n\n1. **${sortedTopics[0][0].replace(/_/g, " ")}**\n2. **${sortedTopics[1][0].replace(/_/g, " ")}**\n\nPlease type 1 or 2, or rephrase your question.`;
         }
 
-        // 19. Fallback
+        // 20. Fallback
         return fallbackResponse(fixedQuestion);
     }
 
@@ -2127,23 +2142,47 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function addMessage(text, type, allowLinks = false) {
-        if (!aiMessages) return;
+function addMessage(text, type, allowLinks = false) {
+    if (!aiMessages) return;
 
-        const el = document.createElement("div");
-        el.className = `ai-message ai-message-${type}`;
+    const el = document.createElement("div");
+    el.className = `ai-message ai-message-${type}`;
 
-        if (allowLinks && type === "bot") {
-            el.innerHTML = renderWithLinks(text);
-        } else {
-            el.textContent = text;
-        }
-
-        aiMessages.appendChild(el);
-        aiMessages.scrollTop = aiMessages.scrollHeight;
-
-        updateScrollButton();
+    if (allowLinks && type === "bot") {
+        el.innerHTML = renderWithLinks(text);
+    } else {
+        el.textContent = text;
     }
+
+    aiMessages.appendChild(el);
+
+    // ── Smart scroll behaviour ─────────────────────────────
+    // Long messages: scroll to the TOP of the new message so the user
+    // starts reading from the beginning (no info gets skipped).
+    // Short messages: scroll to the bottom as usual.
+    // ───────────────────────────────────────────────────────
+    const MESSAGE_HEIGHT_THRESHOLD = 260; // px — roughly 12-15 lines
+    const messageHeight = el.offsetHeight;
+
+    if (messageHeight > MESSAGE_HEIGHT_THRESHOLD) {
+        // Long message → align its top with the top of the chat view
+        const targetScroll =
+            el.offsetTop - aiMessages.offsetTop - 8; // small padding
+
+        aiMessages.scrollTo({
+            top: Math.max(targetScroll, 0),
+            behavior: "smooth"
+        });
+    } else {
+        // Short message → scroll to bottom (default behaviour)
+        aiMessages.scrollTo({
+            top: aiMessages.scrollHeight,
+            behavior: "smooth"
+        });
+    }
+
+    updateScrollButton();
+}
 
 
     function createTypingLogo() {
@@ -2243,7 +2282,7 @@ document.addEventListener("DOMContentLoaded", () => {
             typingEl.remove();
 
             if (!dataLoaded) {
-                addMessage("I'm loading Wassim's profile. Please try again in a moment.", "bot");
+                addMessage("I'm loading Wassim profile. Please try again in a moment.", "bot");
                 isSending = false;
                 return;
             }
@@ -2290,7 +2329,7 @@ document.addEventListener("DOMContentLoaded", () => {
        ============================================================ */
 
     window.Weyra = {
-        version: "2.2.0",
+        version: "1.3.1",
         ask: (q) => getAIResponse(q),
         correct: (t) => correctWords(t),
         detectEntity: (t) => detectEntity(t),
