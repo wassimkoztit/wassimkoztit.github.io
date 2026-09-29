@@ -1,5 +1,5 @@
 /* ============================================================
-   RESTAURANT — i18n (Products included) + Cart + Product Modal
+   RESTAURANT — i18n + Navbar Back + Cart + Product Modal
    ============================================================ */
 
 (() => {
@@ -73,6 +73,18 @@
     const SUPPORTED_LANGS = ["en", "fr", "es"];
     const LANG_STORAGE_KEY = "restaurant_lang";
 
+    const LANG_FLAGS = {
+        en: "https://flagcdn.com/w40/gb.png",
+        fr: "https://flagcdn.com/w40/fr.png",
+        es: "https://flagcdn.com/w40/es.png"
+    };
+
+    const LANG_LABELS = {
+        en: "EN",
+        fr: "FR",
+        es: "ES"
+    };
+
     let currentLang = loadLang();
 
     function loadLang() {
@@ -97,9 +109,6 @@
         }
     }
 
-    /**
-     * Translate a UI key.
-     */
     function t(key) {
         const dict = window.TRANSLATIONS?.[currentLang]
                   || window.TRANSLATIONS?.en
@@ -107,16 +116,10 @@
         return dict[key] ?? key;
     }
 
-    /**
-     * Plural helper.
-     */
     function tItems(count) {
         return `${count} ${count === 1 ? t("items") : t("itemsPlural")}`;
     }
 
-    /**
-     * Get a translated product name.
-     */
     function getProductName(id) {
         const dict = window.TRANSLATIONS?.[currentLang]
                   || window.TRANSLATIONS?.en
@@ -124,9 +127,6 @@
         return dict.products?.[id]?.name || id;
     }
 
-    /**
-     * Get a translated product description.
-     */
     function getProductDesc(id) {
         const dict = window.TRANSLATIONS?.[currentLang]
                   || window.TRANSLATIONS?.en
@@ -134,10 +134,19 @@
         return dict.products?.[id]?.desc || "";
     }
 
-    /**
-     * Apply translations to all [data-i18n] elements,
-     * then re-render dynamic content.
-     */
+    function updateLangButton() {
+        const btnFlagImg = document.querySelector("#currentLangFlag img");
+        if (btnFlagImg) {
+            btnFlagImg.src = LANG_FLAGS[currentLang] || LANG_FLAGS.en;
+            btnFlagImg.alt = currentLang.toUpperCase();
+        }
+
+        const label = document.getElementById("currentLangLabel");
+        if (label) {
+            label.textContent = LANG_LABELS[currentLang] || "EN";
+        }
+    }
+
     function applyTranslations() {
         document.documentElement.lang = currentLang;
 
@@ -147,14 +156,12 @@
             if (translation) el.textContent = translation;
         });
 
-        const langLabel = document.getElementById("currentLangLabel");
-        if (langLabel) langLabel.textContent = currentLang.toUpperCase();
+        updateLangButton();
 
         document.querySelectorAll(".lang-option").forEach(opt => {
             opt.classList.toggle("active", opt.dataset.lang === currentLang);
         });
 
-        // Re-render dynamic content
         renderCategoryOptions();
         renderCart();
 
@@ -166,6 +173,9 @@
             renderMenu(currentCategory);
             updateMenuTitle();
         }
+
+        // Update navbar back after text/layout changes
+        updateNavBackBtn();
     }
 
     function getCategoryLabel(categoryKey) {
@@ -228,6 +238,8 @@
     const langSwitcher = document.getElementById("langSwitcher");
     const langBtn      = document.getElementById("langBtn");
     const langMenu     = document.getElementById("langMenu");
+
+    const navBackBtn   = document.getElementById("navBackBtn");
 
 
     /* ============================================================
@@ -355,7 +367,62 @@
                 behavior: "smooth"
             });
         }
+
+        // Update nav-back visibility after the scroll settles
+        setTimeout(updateNavBackBtn, 350);
     }
+
+
+    /* ============================================================
+       NAVBAR BACK BUTTON
+       ============================================================ */
+
+    function getActiveStepBack() {
+        if (stepSubcategories.style.display !== "none") {
+            return backToCategories;
+        }
+        if (stepMenu.style.display !== "none") {
+            return backToSubcategories;
+        }
+        return null;
+    }
+
+    function updateNavBackBtn() {
+        const activeBack = getActiveStepBack();
+
+        if (!activeBack) {
+            navBackBtn.classList.remove("visible");
+            return;
+        }
+
+        const rect = activeBack.getBoundingClientRect();
+        const headerHeight = 80;
+
+        if (rect.bottom < headerHeight) {
+            navBackBtn.classList.add("visible");
+        } else {
+            navBackBtn.classList.remove("visible");
+        }
+    }
+
+    let scrollTicking = false;
+    window.addEventListener("scroll", () => {
+        if (!scrollTicking) {
+            requestAnimationFrame(() => {
+                updateNavBackBtn();
+                scrollTicking = false;
+            });
+            scrollTicking = true;
+        }
+    }, { passive: true });
+
+    window.addEventListener("resize", updateNavBackBtn);
+
+    // Navbar back button — delegates click to the active step-back
+    navBackBtn.addEventListener("click", () => {
+        const activeBack = getActiveStepBack();
+        if (activeBack) activeBack.click();
+    });
 
 
     /* ============================================================
@@ -409,7 +476,6 @@
         currentCategory = category;
         currentSubcategory = "all";
 
-        // Trending → skip step 2
         if (category === "trending") {
             const trendingItems = getTrendingItems();
 
@@ -590,7 +656,7 @@
 
 
     /* ============================================================
-       BACK BUTTONS
+       BACK BUTTONS (original)
        ============================================================ */
 
     backToCategories.addEventListener("click", () => {
