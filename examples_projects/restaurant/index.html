@@ -23,14 +23,40 @@
         <div class="header-inner">
             <div class="logo">
                 <i class="fa-solid fa-utensils"></i>
-                <span>Le Délice</span>
+                <span data-i18n="brand">Le Délice</span>
             </div>
 
-            <button class="cart-btn" id="cartBtn">
-                <i class="fa-solid fa-bag-shopping"></i>
-                <span>Cart</span>
-                <span class="cart-count" id="cartCount">0</span>
-            </button>
+            <div class="header-actions">
+                <!-- Language Switcher -->
+                <div class="lang-switcher" id="langSwitcher">
+                    <button class="lang-btn" id="langBtn" aria-label="Change language">
+                        <i class="fa-solid fa-globe"></i>
+                        <span id="currentLangLabel">EN</span>
+                        <i class="fa-solid fa-chevron-down lang-arrow"></i>
+                    </button>
+
+                    <div class="lang-menu" id="langMenu">
+                        <button class="lang-option" data-lang="en">
+                            <span class="lang-flag">🇬🇧</span>
+                            <span>English</span>
+                        </button>
+                        <button class="lang-option" data-lang="fr">
+                            <span class="lang-flag">🇫🇷</span>
+                            <span>Français</span>
+                        </button>
+                        <button class="lang-option" data-lang="es">
+                            <span class="lang-flag">🇪🇸</span>
+                            <span>Español</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="cart-btn" id="cartBtn">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span data-i18n="cart">Cart</span>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -38,9 +64,9 @@
     <!-- ===== HERO ===== -->
     <section class="hero">
         <div class="hero-content">
-            <p class="hero-sub">Welcome to</p>
-            <h1 class="hero-title">Le Délice</h1>
-            <p class="hero-text">
+            <p class="hero-sub" data-i18n="heroSub">Welcome to</p>
+            <h1 class="hero-title" data-i18n="brand">Le Délice</h1>
+            <p class="hero-text" data-i18n="heroText">
                 Fresh ingredients, authentic flavors, and a warm atmosphere.
                 Order online and enjoy your meal.
             </p>
@@ -48,40 +74,60 @@
     </section>
 
 
-    <!-- ===== CATEGORIES ===== -->
-    <section class="categories">
-        <div class="categories-inner">
-            <button class="cat-btn active" data-category="food">
-                <i class="fa-solid fa-burger"></i> Food
-            </button>
-            <button class="cat-btn" data-category="drinks">
-                <i class="fa-solid fa-mug-hot"></i> Drinks
-            </button>
-            <button class="cat-btn" data-category="desserts">
-                <i class="fa-solid fa-ice-cream"></i> Desserts
-            </button>
-        </div>
-    </section>
+    <!-- ===== STEPS SECTION ===== -->
+    <section class="steps-section">
 
+        <!-- STEP 1 — CATEGORIES -->
+        <div class="step" id="stepCategories">
+            <h2 class="step-title" data-i18n="step1Title">What are you craving?</h2>
+            <p class="step-sub" data-i18n="step1Sub">Pick a category to get started</p>
 
-    <!-- ===== MENU ===== -->
-    <section class="menu">
-        <div class="menu-grid" id="menuGrid">
-            <!-- Items injected by JS -->
+            <div class="step-options" id="categoryOptions">
+                <!-- Injected by JS -->
+            </div>
         </div>
+
+        <!-- STEP 2 — SUBCATEGORIES -->
+        <div class="step" id="stepSubcategories" style="display:none;">
+            <button class="step-back" id="backToCategories">
+                <i class="fa-solid fa-arrow-left"></i> <span data-i18n="back">Back</span>
+            </button>
+
+            <h2 class="step-title" id="subcategoryTitle">Food</h2>
+            <p class="step-sub" data-i18n="step2Sub">Choose a type</p>
+
+            <div class="step-options" id="subcategoryOptions">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+
+        <!-- STEP 3 — MENU -->
+        <div class="step" id="stepMenu" style="display:none;">
+            <button class="step-back" id="backToSubcategories">
+                <i class="fa-solid fa-arrow-left"></i> <span data-i18n="back">Back</span>
+            </button>
+
+            <h2 class="step-title" id="menuTitle">Pizza</h2>
+            <p class="step-sub" id="menuSubtitle">2 items</p>
+
+            <div class="menu-grid" id="menuGrid">
+                <!-- Items injected by JS -->
+            </div>
+        </div>
+
     </section>
 
 
     <!-- ===== FOOTER ===== -->
     <footer class="footer">
-        <p>© 2026 Le Délice — All rights reserved.</p>
+        <p data-i18n="footer">© 2026 Le Délice — All rights reserved.</p>
     </footer>
 
 
     <!-- ===== CART DRAWER ===== -->
     <aside class="cart-drawer" id="cartDrawer">
         <div class="cart-header">
-            <h2>Your Order</h2>
+            <h2 data-i18n="yourOrder">Your Order</h2>
             <button class="cart-close" id="cartClose">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -93,11 +139,12 @@
 
         <div class="cart-footer">
             <div class="cart-total">
-                <span>Total</span>
+                <span data-i18n="total">Total</span>
                 <strong id="cartTotal">0.00 MAD</strong>
             </div>
             <button class="checkout-btn" id="checkoutBtn">
-                Checkout <i class="fa-solid fa-arrow-right"></i>
+                <span data-i18n="checkout">Checkout</span>
+                <i class="fa-solid fa-arrow-right"></i>
             </button>
         </div>
     </aside>
@@ -105,10 +152,58 @@
     <div class="cart-overlay" id="cartOverlay"></div>
 
 
+    <!-- ===== PRODUCT MODAL ===== -->
+    <div class="product-modal" id="productModal">
+        <div class="product-modal-overlay" id="productModalOverlay"></div>
+
+        <div class="product-modal-content">
+            <button class="product-modal-close" id="productModalClose">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="product-modal-image-wrapper">
+                <img class="product-modal-image" id="productModalImage" src="" alt="">
+            </div>
+
+            <div class="product-modal-body">
+                <h2 class="product-modal-name" id="productModalName"></h2>
+                <p class="product-modal-desc" id="productModalDesc"></p>
+
+                <div class="product-modal-price">
+                    <span id="productModalPrice"></span>
+                    <small data-i18n="perItem">per item</small>
+                </div>
+
+                <div class="product-modal-actions">
+                    <div class="qty-selector">
+                        <button class="qty-selector-btn" data-action="dec">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                        <span class="qty-selector-value" id="productModalQty">1</span>
+                        <button class="qty-selector-btn" data-action="inc">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+
+                    <button class="product-modal-add-btn" id="productModalAdd">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <span>
+                            <span data-i18n="addToCart">Add to Cart</span> —
+                            <strong id="productModalTotal">0.00 MAD</strong>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- ===== TOAST ===== -->
     <div class="toast" id="toast"></div>
 
 
+    <!-- ===== SCRIPTS ===== -->
+    <script src="translations.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
