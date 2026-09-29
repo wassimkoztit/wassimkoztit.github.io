@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Délice — Restaurant</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <i class="fa-solid fa-utensils"></i>
+                <span>Le Délice</span>
+            </div>
+
+            <button class="cart-btn" id="cartBtn">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span>Cart</span>
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+        </div>
+    </header>
+
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <div class="hero-content">
+            <p class="hero-sub">Welcome to</p>
+            <h1 class="hero-title">Le Délice</h1>
+            <p class="hero-text">
+                Fresh ingredients, authentic flavors, and a warm atmosphere.
+                Order online and enjoy your meal.
+            </p>
+        </div>
+    </section>
+
+
+    <!-- ===== CATEGORIES ===== -->
+    <section class="categories">
+        <div class="categories-inner">
+            <button class="cat-btn active" data-category="food">
+                <i class="fa-solid fa-burger"></i> Food
+            </button>
+            <button class="cat-btn" data-category="drinks">
+                <i class="fa-solid fa-mug-hot"></i> Drinks
+            </button>
+            <button class="cat-btn" data-category="desserts">
+                <i class="fa-solid fa-ice-cream"></i> Desserts
+            </button>
+        </div>
+    </section>
+
+
+    <!-- ===== MENU ===== -->
+    <section class="menu">
+        <div class="menu-grid" id="menuGrid">
+            <!-- Items injected by JS -->
+        </div>
+    </section>
+
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <p>© 2026 Le Délice — All rights reserved.</p>
+    </footer>
+
+
+    <!-- ===== CART DRAWER ===== -->
+    <aside class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h2>Your Order</h2>
+            <button class="cart-close" id="cartClose">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="cart-body" id="cartBody">
+            <!-- Items injected by JS -->
+        </div>
+
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <strong id="cartTotal">0.00 MAD</strong>
+            </div>
+            <button class="checkout-btn" id="checkoutBtn">
+                Checkout <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <div class="cart-overlay" id="cartOverlay"></div>
+
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
+
+    <script src="script.js"></script>
+</body>
+</html>
