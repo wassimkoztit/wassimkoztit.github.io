@@ -20,6 +20,7 @@ html {
     --border: #e5e7eb;
     --success: #10b981;
     --radius: 14px;
+    --header-height: 72px;
 }
 
 body {
@@ -54,6 +55,7 @@ h1, h2, h3 {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
 }
 
 .logo {
@@ -64,6 +66,7 @@ h1, h2, h3 {
     font-weight: 700;
     color: var(--primary);
     font-family: "Playfair Display", serif;
+    flex-shrink: 0;
 }
 
 .logo i {
@@ -74,8 +77,72 @@ h1, h2, h3 {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-left: auto;
 }
 
+
+/* ========================================
+   NAVBAR BACK BUTTON
+======================================== */
+.nav-back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 48px;
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--dark);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: inherit;
+    flex-shrink: 0;
+
+    /* Hidden by default */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-10px);
+    width: 0;
+    margin-right: 0;
+    padding: 0;
+    border-width: 0;
+    overflow: hidden;
+}
+
+
+.nav-back-btn .fa-arrow-left{
+    margin-right: 4px;
+}
+
+.nav-back-btn.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    width: 60px;
+    margin-right: 13px;
+    border-width: 1px;
+}
+
+.nav-back-btn:hover {
+    background: var(--dark);
+    color: #fff;
+    border-color: var(--dark);
+}
+
+.nav-back-btn:active {
+    transform: scale(0.92);
+}
+
+.nav-back-btn i {
+    font-size: 13px;
+}
+
+
+/* ========================================
+   CART BUTTON
+======================================== */
 .cart-btn {
     position: relative;
     display: flex;
@@ -91,6 +158,7 @@ h1, h2, h3 {
     cursor: pointer;
     transition: transform 0.2s ease, background 0.2s ease;
     font-family: inherit;
+    flex-shrink: 0;
 }
 
 .cart-btn:hover {
@@ -139,10 +207,6 @@ h1, h2, h3 {
 .lang-btn:hover {
     border-color: var(--primary);
     color: var(--primary);
-}
-
-.lang-btn i.fa-globe {
-    font-size: 13px;
 }
 
 .lang-arrow {
@@ -206,12 +270,30 @@ h1, h2, h3 {
     font-weight: 600;
 }
 
+
+/* ========================================
+   FLAG STYLING (both in button + menu)
+======================================== */
+.lang-flag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 16px;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+    background: #f0f0f0;
+}
+
 .lang-flag img {
-    width: 50%;
-    height: 50%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     display: block;
 }
+
 
 /* ========================================
    HERO
@@ -1186,10 +1268,15 @@ h1, h2, h3 {
     }
 
     .header-inner {
-        padding: 14px 18px;
+        padding: 14px 16px;
+        gap: 6px;
     }
 
     .logo {
+        font-size: 16px;
+    }
+
+    .logo i {
         font-size: 18px;
     }
 
@@ -1198,16 +1285,38 @@ h1, h2, h3 {
     }
 
     .lang-btn {
-        padding: 8px 10px;
-        font-size: 12px;
+        padding: 6px 8px;
+        font-size: 11px;
+        gap: 4px;
     }
 
     .lang-btn #currentLangLabel {
-        display: none;
+        display: inline;
+        font-size: 10px;
+    }
+
+    .lang-flag {
+        width: 18px;
+        height: 13px;
     }
 
     .lang-arrow {
         display: none;
+    }
+
+    .nav-back-btn {
+        width: 60px;
+        height: 48px;
+        font-size: 12px;
+    }
+
+    .nav-back-btn.visible {
+        width: 60px;
+        margin-right: 13px;
+    }
+
+    .cart-btn {
+        padding: 8px 12px;
     }
 
     .cart-btn span:not(.cart-count) {
