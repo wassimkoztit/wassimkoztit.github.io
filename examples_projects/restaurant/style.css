@@ -54,10 +54,11 @@ h1, h2, h3 {
     padding: 16px 24px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 10px;
+    /* NOTE: no justify-content — we control order with 'order' + margin-left:auto */
 }
 
+/* Logo — always first, at the far left */
 .logo {
     display: flex;
     align-items: center;
@@ -67,16 +68,19 @@ h1, h2, h3 {
     color: var(--primary);
     font-family: "Playfair Display", serif;
     flex-shrink: 0;
+    order: 1;
 }
 
 .logo i {
     font-size: 22px;
 }
 
+/* Header actions — always last, at the far right */
 .header-actions {
     display: flex;
     align-items: center;
     gap: 10px;
+    order: 3;
     margin-left: auto;
 }
 
@@ -88,40 +92,38 @@ h1, h2, h3 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
-    height: 48px;
+    height: 40px;
+    padding: 0 14px;
     background: var(--light);
     border: 1px solid var(--border);
-    border-radius: 50%;
+    border-radius: 50px;
     color: var(--dark);
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.25s ease;
     font-family: inherit;
     flex-shrink: 0;
+    order: 2; /* Sits between logo and header-actions */
 
-    /* Hidden by default */
+    /* Hidden by default — appears on scroll */
     opacity: 0;
     visibility: hidden;
     transform: translateX(-10px);
     width: 0;
-    margin-right: 0;
     padding: 0;
+    margin-right: 0;
     border-width: 0;
     overflow: hidden;
-}
-
-
-.nav-back-btn .fa-arrow-left{
-    margin-right: 4px;
 }
 
 .nav-back-btn.visible {
     opacity: 1;
     visibility: visible;
     transform: translateX(0);
-    width: 60px;
-    margin-right: 13px;
+    width: auto;
+    padding: 0 14px;
+    margin-right: 4px;
     border-width: 1px;
 }
 
@@ -136,7 +138,8 @@ h1, h2, h3 {
 }
 
 .nav-back-btn i {
-    font-size: 13px;
+    font-size: 12px;
+    margin-right: 6px;
 }
 
 
@@ -272,7 +275,7 @@ h1, h2, h3 {
 
 
 /* ========================================
-   FLAG STYLING (both in button + menu)
+   FLAG STYLING
 ======================================== */
 .lang-flag {
     display: inline-flex;
@@ -1267,21 +1270,46 @@ h1, h2, h3 {
         max-width: 100%;
     }
 
+    /* ===== HEADER ON MOBILE ===== */
     .header-inner {
-        padding: 14px 16px;
+        padding: 12px 14px;
         gap: 6px;
     }
 
     .logo {
-        font-size: 16px;
+        font-size: 15px;
+        gap: 6px;
     }
 
     .logo i {
-        font-size: 18px;
+        font-size: 17px;
+    }
+
+    /* Navbar back on mobile — icon only */
+    .nav-back-btn {
+        height: 34px;
+        padding: 0 10px;
+        font-size: 11px;
+    }
+
+    .nav-back-btn.visible {
+        width: auto;
+        padding: 0 10px;
+        margin-right: 2px;
+    }
+
+    .nav-back-btn i {
+        font-size: 11px;
+        margin-right: 0;
+    }
+
+    /* Hide "Back" text on mobile — icon only */
+    .nav-back-btn .nav-back-text {
+       margin-left: 6px;
     }
 
     .header-actions {
-        gap: 6px;
+        gap: 5px;
     }
 
     .lang-btn {
@@ -1304,25 +1332,15 @@ h1, h2, h3 {
         display: none;
     }
 
-    .nav-back-btn {
-        width: 60px;
-        height: 48px;
-        font-size: 12px;
-    }
-
-    .nav-back-btn.visible {
-        width: 60px;
-        margin-right: 13px;
-    }
-
     .cart-btn {
-        padding: 8px 12px;
+        padding: 8px 10px;
     }
 
     .cart-btn span:not(.cart-count) {
         display: none;
     }
 
+    /* Product modal — bottom sheet */
     .product-modal {
         padding: 0;
         align-items: flex-end;
