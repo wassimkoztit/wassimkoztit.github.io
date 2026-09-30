@@ -22,16 +22,19 @@
     <header class="header">
         <div class="header-inner">
 
-            <!-- Navbar Back Button (hidden by default, appears on scroll) -->
-            <button class="nav-back-btn" id="navBackBtn" aria-label="Back">
-                <i class="fa-solid fa-arrow-left"></i>Back
-            </button>
-
+            <!-- Logo (always first, at the far left) -->
             <div class="logo">
                 <i class="fa-solid fa-utensils"></i>
                 <span data-i18n="brand">Le Délice</span>
             </div>
 
+            <!-- Navbar Back Button (appears right after logo on scroll) -->
+            <button class="nav-back-btn" id="navBackBtn" aria-label="Back">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span class="nav-back-text" data-i18n="back">Back</span>
+            </button>
+
+            <!-- Header actions (always at the far right) -->
             <div class="header-actions">
                 <!-- Language Switcher -->
                 <div class="lang-switcher" id="langSwitcher">
