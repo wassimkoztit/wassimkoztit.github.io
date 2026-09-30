@@ -368,7 +368,6 @@
             });
         }
 
-        // Update nav-back visibility after the scroll settles
         setTimeout(updateNavBackBtn, 350);
     }
 
@@ -418,7 +417,6 @@
 
     window.addEventListener("resize", updateNavBackBtn);
 
-    // Navbar back button — delegates click to the active step-back
     navBackBtn.addEventListener("click", () => {
         const activeBack = getActiveStepBack();
         if (activeBack) activeBack.click();
